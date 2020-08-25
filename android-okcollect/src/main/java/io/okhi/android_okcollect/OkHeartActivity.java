@@ -14,13 +14,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.okhi.android_core.models.OkHiMode;
+
+
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
-    private String phone, firstName, lastName;
+    private String phone, firstName, lastName,environment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_okheart);
+        Bundle bundle = getIntent().getExtras();
+        phone = bundle.getString("phone");
+        firstName = bundle.getString("firstName");
+        lastName = bundle.getString("lastName");
+        environment = bundle.getString("environment");
         myWebView = findViewById(R.id.webview);
         myWebView.setWebViewClient(new MyWebViewClient());
         WebSettings webSettings = myWebView.getSettings();
@@ -32,17 +40,21 @@ public class OkHeartActivity extends AppCompatActivity {
         webSettings.setDatabaseEnabled(true);
         webSettings.setDomStorageEnabled(true);
         myWebView.addJavascriptInterface(new WebAppInterface(io.okhi.android_okcollect.OkHeartActivity.this), "Android");
-        myWebView.loadUrl("https://dev-manager-v5.okhi.io");
+        if(environment.equalsIgnoreCase(OkHiMode.PROD)){
+            myWebView.loadUrl("https://manager-v5.okhi.io");
+        }
+        else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
+            myWebView.loadUrl("https://sandbox-manager-v5.okhi.io");
+        }
+        else{
+            myWebView.loadUrl("https://dev-manager-v5.okhi.io");
+        }
         myWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
                 callback.invoke(origin, true, false);
             }
         });
-        Bundle bundle = getIntent().getExtras();
-        phone = bundle.getString("phone");
-        firstName = bundle.getString("firstName");
-        lastName = bundle.getString("lastName");
     }
 
     public void receiveMessage(String results) {

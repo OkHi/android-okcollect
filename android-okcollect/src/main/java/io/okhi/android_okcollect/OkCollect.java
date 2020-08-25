@@ -17,16 +17,16 @@ import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
 
-import static io.okhi.android_okcollect.utilities.Constants.SCOPES;
-
 public class OkCollect extends OkHiCore {
     private OkHiAppContext okHiAppContext;
     private String primaryColor;
     private String url;
     private String appBarColor;
+    private String environment;
     private Boolean enableStreetView;
     private Activity activity;
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
+    private static OkCollect okCollect;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);
@@ -35,6 +35,7 @@ public class OkCollect extends OkHiCore {
         this.url = builder.url;
         this.appBarColor = builder.appBarColor;
         this.enableStreetView = builder.enableStreetView;
+        this.environment = builder.okHiAuth.getContext().getMode();
     }
 
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
@@ -44,21 +45,8 @@ public class OkCollect extends OkHiCore {
         intent.putExtra("phone", user.getPhone());
         intent.putExtra("firstName", user.getFirstName());
         intent.putExtra("lastName", user.getLastName());
+        intent.putExtra("environment", environment);
         activity.startActivity(intent);
-    }
-
-    public void signin(){
-        anonymousSignWithPhoneNumber("phone", SCOPES, new OkHiSignInRequestHandler() {
-            @Override
-            public void onSuccess(String authorizationToken) {
-
-            }
-
-            @Override
-            public void onError(OkHiException exception) {
-                OkCollect.getOkCollectCallback().onError(exception);
-            }
-        });
     }
 
     public static class Builder {
