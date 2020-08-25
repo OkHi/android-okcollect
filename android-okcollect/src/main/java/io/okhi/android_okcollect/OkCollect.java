@@ -7,10 +7,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import io.okhi.android_core.OkHiCore;
-import io.okhi.android_core.interfaces.OkHiSignInRequestHandler;
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
-import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;

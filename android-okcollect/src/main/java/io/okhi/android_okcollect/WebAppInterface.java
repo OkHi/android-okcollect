@@ -3,11 +3,6 @@ package io.okhi.android_okcollect;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import io.okhi.android_core.OkHiCore;
-
 
 class WebAppInterface {
     OkHeartActivity mContext;
