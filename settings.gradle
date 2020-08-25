@@ -1,0 +1,3 @@
+include ':android-okcollect'
+include ':app'
+rootProject.name = "android-okcollect"
