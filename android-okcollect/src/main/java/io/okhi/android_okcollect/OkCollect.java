@@ -13,8 +13,11 @@ import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_okcollect.callbacks.OkCollectCallback;
+import io.okhi.android_okcollect.utilities.OkHiConfig;
+import io.okhi.android_okcollect.utilities.OkHiTheme;
 
-import static io.okhi.android_okcollect.Constants.SCOPES;
+import static io.okhi.android_okcollect.utilities.Constants.SCOPES;
 
 public class OkCollect extends OkHiCore {
     private OkHiAppContext okHiAppContext;
@@ -23,7 +26,7 @@ public class OkCollect extends OkHiCore {
     private String appBarColor;
     private Boolean enableStreetView;
     private Activity activity;
-    private static OkCollectCallback <OkHiUser, OkHiLocation> okCollectCallback;
+    private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);

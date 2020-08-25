@@ -1,9 +1,4 @@
-package io.okhi.android_okcollect;
-
-import io.okhi.android_core.interfaces.OkHiSignInRequestHandler;
-import io.okhi.android_core.models.OkHiException;
-
-import static io.okhi.android_okcollect.Constants.SCOPES;
+package io.okhi.android_okcollect.utilities;
 
 public class OkHiConfig {
     private Boolean enableStreetView;

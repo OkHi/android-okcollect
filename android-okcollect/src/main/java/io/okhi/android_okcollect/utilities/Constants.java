@@ -1,4 +1,4 @@
-package io.okhi.android_okcollect;
+package io.okhi.android_okcollect.utilities;
 
 import io.okhi.android_core.models.OkHiAccessScope;
 

@@ -1,8 +1,6 @@
 package io.okhi.android_okcollect;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +12,9 @@ import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_okcollect.callbacks.OkCollectCallback;
+import io.okhi.android_okcollect.utilities.OkHiConfig;
+import io.okhi.android_okcollect.utilities.OkHiTheme;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEV_CLIENT_KEY = "4d380065-71e5-48b8-8fb3-29fe61299c4b";

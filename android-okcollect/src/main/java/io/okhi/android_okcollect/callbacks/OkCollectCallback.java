@@ -1,4 +1,4 @@
-package io.okhi.android_okcollect;
+package io.okhi.android_okcollect.callbacks;
 
 import io.okhi.android_core.models.OkHiException;
 
