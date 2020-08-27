@@ -1,4 +1,4 @@
-package io.okhi.android_okcollect;
+package com.okhi.okcollect;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,8 @@ import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_okcollect.OkCollect;
+import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
