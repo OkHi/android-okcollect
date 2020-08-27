@@ -1,5 +1,6 @@
 package io.okhi.android_okcollect;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,61 +50,61 @@ public class OkHeartActivity extends AppCompatActivity {
             firstName = bundle.getString("firstName");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("firstName bundle.get error "+firstName);
         }
         try{
             lastName = bundle.getString("lastName");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("lastName bundle.get error "+lastName);
         }
         try{
             environment = bundle.getString("environment");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("environment bundle.get error "+environment);
         }
         try{
             authorizationToken = bundle.getString("authorizationToken");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("authorizationToken bundle.get error "+authorizationToken);
         }
         try{
             primaryColor = bundle.getString("primaryColor");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("primaryColor bundle.get error "+primaryColor);
         }
         try{
             developerName = bundle.getString("developerName");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("developerName bundle.get error "+developerName);
         }
         try{
             url = bundle.getString("url");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("url bundle.get error "+url);
         }
         try{
             appBarColor = bundle.getString("appBarColor");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("appBarColor bundle.get error "+appBarColor);
         }
         try{
             organisationName = bundle.getString("organisationName");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("organisationName bundle.get error "+organisationName);
         }
         try{
             enableStreetView = bundle.getBoolean("enableStreetView");
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("enableStreetView bundle.get error "+enableStreetView);
         }
     }
 
@@ -237,9 +239,15 @@ public class OkHeartActivity extends AppCompatActivity {
                             if (appBarColor.length() > 0) {
                                 appBar.put("color", appBarColor);
                                 appBar.put("visible", true);
+                                config.put("appBar", appBar);
+                            }
+                            else{
+                                appBar.put("visible", false);
+                                config.put("appBar", appBar);
                             }
                         }
-                        if (appBar != null) {
+                        else{
+                            appBar.put("visible", false);
                             config.put("appBar", appBar);
                         }
                         payload1.put("config", config);

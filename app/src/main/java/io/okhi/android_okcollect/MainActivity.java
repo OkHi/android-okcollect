@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
                 .withLastName("Ochola")
                 .build();
 
-        OkHiTheme theme = new OkHiTheme.Builder("#333")
-                .withAppBar("https://mydomain.com/logo.png", "#222")
+        OkHiTheme theme = new OkHiTheme.Builder("#ba0c2f")
+                .withAppBar("https://cdn.okhi.co/icon.png", "#ba0c2f")
                 .build();
 
         OkHiConfig config = new OkHiConfig.Builder()
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         okCollect = new OkCollect.Builder(okhiAuth, this)
-                .withTheme(theme)
+                //.withTheme(theme)
                 .withConfig(config)
                 .build();
 
