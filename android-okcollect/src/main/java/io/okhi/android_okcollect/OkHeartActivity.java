@@ -20,6 +20,7 @@ import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 
 
 public class OkHeartActivity extends AppCompatActivity {
@@ -156,9 +157,11 @@ public class OkHeartActivity extends AppCompatActivity {
                     break;
                 case "fatal_exit":
                     displayLog("fatal_exit");
+                    processError(results);
                     break;
                 default:
                     displayLog("default");
+                    processError(results);
                     break;
             }
         } catch (JSONException e) {
@@ -274,6 +277,28 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("Json object error "+e.toString());
+        }
+    }
+
+    private void processError(String response){
+        try {
+            final JSONObject jsonObject = new JSONObject(response);
+            String message = jsonObject.optString("message");
+            JSONObject payload = jsonObject.optJSONObject("payload");
+            if (payload == null) {
+                String backuppayload = jsonObject.optString("payload");
+                if (backuppayload != null) {
+                    payload = new JSONObject();
+                    payload.put("error", backuppayload);
+                }
+            }
+            jsonObject.put("payload", payload);
+            jsonObject.put("message", "fatal_exit");
+            OkCollectApplication.getOkCollectCallback().onError(new OkHiException("fatal_exit", payload.toString()));
+            finish();
+        }
+        catch (Exception e){
+            displayLog("json error exception "+e.toString());
         }
     }
 
