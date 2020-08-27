@@ -14,22 +14,98 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
+import io.okhi.android_core.models.OkHiException;
+import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
+import io.okhi.android_core.models.OkHiUser;
 
 
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
-    private String phone, firstName, lastName,environment;
+    private Boolean enableStreetView;
+    private String phone, firstName, lastName,environment,developerName,
+            authorizationToken,primaryColor,url,appBarColor, organisationName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_okheart);
-        Bundle bundle = getIntent().getExtras();
-        phone = bundle.getString("phone");
-        firstName = bundle.getString("firstName");
-        lastName = bundle.getString("lastName");
-        environment = bundle.getString("environment");
         myWebView = findViewById(R.id.webview);
+        Bundle bundle = getIntent().getExtras();
+        processBundle(bundle);
+        setupWebView();
+    }
+    private void processBundle(Bundle bundle){
+        try {
+            phone = bundle.getString("phone");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            firstName = bundle.getString("firstName");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            lastName = bundle.getString("lastName");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            environment = bundle.getString("environment");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            authorizationToken = bundle.getString("authorizationToken");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            primaryColor = bundle.getString("primaryColor");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            developerName = bundle.getString("developerName");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            url = bundle.getString("url");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            appBarColor = bundle.getString("appBarColor");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            organisationName = bundle.getString("organisationName");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+        try{
+            enableStreetView = bundle.getBoolean("enableStreetView");
+        }
+        catch (Exception e){
+            displayLog("phone bundle.get error "+phone);
+        }
+    }
+
+    private void setupWebView(){
         myWebView.setWebViewClient(new MyWebViewClient());
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setLoadsImagesAutomatically(true);
@@ -64,16 +140,19 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payload = jsonObject.optJSONObject("payload");
             switch (message) {
                 case "app_state":
-                    startApp();
+                    launchHeart();
                     break;
                 case "location_created":
                     displayLog("location_created");
+                    processResponse(results);
                     break;
                 case "location_updated":
                     displayLog("location_updated");
+                    processResponse(results);
                     break;
                 case "location_selected":
                     displayLog("location_selected");
+                    processResponse(results);
                     break;
                 case "fatal_exit":
                     displayLog("fatal_exit");
@@ -86,8 +165,116 @@ public class OkHeartActivity extends AppCompatActivity {
             displayLog("Json object error "+e.toString());
         }
     }
-    protected void startApp(){
-        displayLog("start app");
+
+    private void launchHeart(){
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("message", "select_location");
+                        JSONObject payload1 = new JSONObject();
+                        JSONObject style = new JSONObject();
+                        JSONObject base = new JSONObject();
+                        if (primaryColor != null) {
+                            if (primaryColor.length() > 0) {
+                                base.put("color", primaryColor);
+                            }
+                        }
+                        if (organisationName != null) {
+                            if (organisationName.length() > 0) {
+                                base.put("name", organisationName);
+                            }
+                        }
+                        if (url != null) {
+                            if (url.length() > 0) {
+                                base.put("logo", url);
+                            }
+                        }
+                        style.put("base", base);
+                        payload1.put("style", style);
+
+                        JSONObject user = new JSONObject();
+                        user.put("firstName", firstName);
+                        user.put("lastName", lastName);
+                        user.put("phone", phone);
+                        payload1.put("user", user);
+
+                        JSONObject auth = new JSONObject();
+                        auth.put("authToken", authorizationToken);
+                        payload1.put("auth", auth);
+
+                        JSONObject context = new JSONObject();
+                        JSONObject container = new JSONObject();
+                        container.put("name", "okCollectMobileAndroid");
+                        container.put("version", BuildConfig.VERSION_NAME);
+                        context.put("container", container);
+
+                        JSONObject developer = new JSONObject();
+                        developer.put("name", developerName);
+                        context.put("developer", developer);
+
+                        JSONObject library = new JSONObject();
+                        library.put("name", "okCollectMobileAndroid");
+                        library.put("version", BuildConfig.VERSION_NAME);
+                        context.put("library", library);
+
+                        JSONObject platform = new JSONObject();
+                        platform.put("name", "mobile");
+                        context.put("platform", platform);
+                        payload1.put("context", context);
+
+                        JSONObject config = new JSONObject();
+                        if (enableStreetView != null) {
+                            config.put("streetView", enableStreetView);
+                        }
+                        JSONObject appBar = new JSONObject();
+                        if (appBarColor != null) {
+                            if (appBarColor.length() > 0) {
+                                appBar.put("color", appBarColor);
+                                appBar.put("visible", true);
+                            }
+                        }
+                        if (appBar != null) {
+                            config.put("appBar", appBar);
+                        }
+                        payload1.put("config", config);
+                        jsonObject.put("payload", payload1);
+                        Log.i("okheart", jsonObject.toString().replace("\\", ""));
+                        myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" +
+                                jsonObject.toString().replace("\\", "") + ")", null);
+                    } catch (Exception e) {
+                        displayLog( "Json object error "+e.toString());
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+            displayLog("error running on UI thread "+e.toString());
+        }
+    }
+
+    private void processResponse(String response){
+        try{
+            JSONObject responseObject = new JSONObject(response);
+            JSONObject payloadObject = responseObject.optJSONObject("payload");
+            JSONObject locationObject = payloadObject.optJSONObject("location");
+            JSONObject userObject = payloadObject.optJSONObject("user");
+            OkHiUser user = new OkHiUser.Builder(userObject.optString("phone"))
+                    .withFirstName(userObject.optString("first_name"))
+                    .withLastName(userObject.optString("last_name"))
+                    .build();
+            String ualId = locationObject.optString("id");
+            Double lat = locationObject.optJSONObject("geo_point").getDouble("lat");
+            Double lng = locationObject.optJSONObject("geo_point").getDouble("lon");
+            OkHiLocation location = new OkHiLocation(ualId, lat, lng);
+            OkCollectApplication.getOkCollectCallback().onSuccess(user,location);
+            finish();
+        }
+        catch (Exception e){
+            displayLog("Json object error "+e.toString());
+        }
     }
 
     @Override

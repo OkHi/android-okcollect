@@ -6,14 +6,23 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 import io.okhi.android_core.OkHiCore;
+import io.okhi.android_core.interfaces.OkHiSignInRequestHandler;
+import io.okhi.android_core.models.Constant;
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
+import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
+
+import static io.okhi.android_okcollect.utilities.Constants.SCOPES;
 
 public class OkCollect extends OkHiCore {
     private OkHiAppContext okHiAppContext;
@@ -21,10 +30,10 @@ public class OkCollect extends OkHiCore {
     private String url;
     private String appBarColor;
     private String environment;
+    private String organisationName;
+    private String developer;
     private Boolean enableStreetView;
     private Activity activity;
-    private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
-    private static OkCollect okCollect;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);
@@ -34,17 +43,35 @@ public class OkCollect extends OkHiCore {
         this.appBarColor = builder.appBarColor;
         this.enableStreetView = builder.enableStreetView;
         this.environment = builder.okHiAuth.getContext().getMode();
+        this.organisationName = builder.okHiAuth.getContext().getAppMeta().getName();
+        this.developer = builder.okHiAuth.getContext().getDeveloper();
     }
 
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
             OkHiLocation> okCollectCallback){
-        this.okCollectCallback = okCollectCallback;
-        Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("phone", user.getPhone());
-        intent.putExtra("firstName", user.getFirstName());
-        intent.putExtra("lastName", user.getLastName());
-        intent.putExtra("environment", environment);
-        activity.startActivity(intent);
+        OkCollectApplication.setOkCollectCallback(okCollectCallback);
+        anonymousSignWithPhoneNumber(user.getPhone(), SCOPES, new OkHiSignInRequestHandler() {
+            @Override
+            public void onSuccess(String authorizationToken) {
+                Intent intent = new Intent(activity, OkHeartActivity.class);
+                intent.putExtra("phone", user.getPhone());
+                intent.putExtra("firstName", user.getFirstName());
+                intent.putExtra("lastName", user.getLastName());
+                intent.putExtra("environment", environment);
+                intent.putExtra("authorizationToken", authorizationToken);
+                intent.putExtra("primaryColor", primaryColor);
+                intent.putExtra("url", url);
+                intent.putExtra("appBarColor", appBarColor);
+                intent.putExtra("enableStreetView", enableStreetView);
+                intent.putExtra("developerName", developer);
+                intent.putExtra("organisationName", organisationName);
+                activity.startActivity(intent);
+            }
+            @Override
+            public void onError(OkHiException exception) {
+                okCollectCallback.onError(exception);
+            }
+        });
     }
 
     public static class Builder {
@@ -112,15 +139,6 @@ public class OkCollect extends OkHiCore {
     public void setEnableStreetView(Boolean enableStreetView) {
         this.enableStreetView = enableStreetView;
     }
-
-    public static OkCollectCallback<OkHiUser, OkHiLocation> getOkCollectCallback() {
-        return okCollectCallback;
-    }
-
-    public void setOkCollectCallback(OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback) {
-        this.okCollectCallback = okCollectCallback;
-    }
-
     private void displayLog(String log){
         Log.i("OkCollect", log);
     }
