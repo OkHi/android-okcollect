@@ -275,11 +275,33 @@ public class OkHeartActivity extends AppCompatActivity {
             OkHiUser user = new OkHiUser.Builder(userObject.optString("phone"))
                     .withFirstName(userObject.optString("first_name"))
                     .withLastName(userObject.optString("last_name"))
+                    .withOkHiUserId(userObject.optString("id"))
                     .build();
             String ualId = locationObject.optString("id");
             Double lat = locationObject.optJSONObject("geo_point").getDouble("lat");
             Double lng = locationObject.optJSONObject("geo_point").getDouble("lon");
-            OkHiLocation location = new OkHiLocation(ualId, lat, lng);
+            String streetName = locationObject.optString("street_name");
+            String propertyName = locationObject.optString("property_name");
+            String propertyNumber = locationObject.optString("property_number");
+            String directions = locationObject.optString("directions");
+            String placeId = locationObject.optString("place_id");
+            String url = locationObject.optString("url");
+            String title = locationObject.optString("title");
+            String photo = locationObject.optString("photo");
+            String subtitle = locationObject.optString("subtitle");
+            String plusCode = locationObject.optString("plus_code");
+            String displayTitle = locationObject.optString("display_title");
+            OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
+                    .setDirections(directions)
+                    .setUrl(url)
+                    .setPlaceId(placeId)
+                    .setPlusCode(plusCode)
+                    .setTitle(title)
+                    .setSubtitle(subtitle)
+                    .setPropertyName(propertyName)
+                    .setStreetName(streetName)
+                    .setOtherInformation(displayTitle)
+                    .build();
             OkCollectApplication.getOkCollectCallback().onSuccess(user,location);
             finish();
         }
