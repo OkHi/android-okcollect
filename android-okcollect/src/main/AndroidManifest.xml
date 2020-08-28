@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".OkCollectApplication"
         android:launchMode="singleInstance">
         <activity android:noHistory="true" android:name=".OkHeartActivity"></activity>
     </application>

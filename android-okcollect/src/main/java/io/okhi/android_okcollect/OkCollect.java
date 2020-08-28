@@ -6,13 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
 import io.okhi.android_core.OkHiCore;
 import io.okhi.android_core.interfaces.OkHiRequestHandler;
-import io.okhi.android_core.models.Constant;
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
@@ -49,28 +44,32 @@ public class OkCollect extends OkHiCore {
 
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
             OkHiLocation> okCollectCallback){
-        OkCollectApplication.setOkCollectCallback(okCollectCallback);
+        getAuth(user);
+        Intent intent = new Intent(activity, OkHeartActivity.class);
+        intent.putExtra("phone", user.getPhone());
+        intent.putExtra("firstName", user.getFirstName());
+        intent.putExtra("lastName", user.getLastName());
+        intent.putExtra("environment", environment);
+        intent.putExtra("primaryColor", primaryColor);
+        intent.putExtra("url", url);
+        intent.putExtra("appBarColor", appBarColor);
+        intent.putExtra("enableStreetView", enableStreetView);
+        intent.putExtra("developerName", developer);
+        intent.putExtra("organisationName", organisationName);
+        activity.startActivity(intent);
+        OkHeartActivity.setOkCollectCallback(okCollectCallback);
+    }
+
+    private void getAuth(OkHiUser user){
         anonymousSignWithPhoneNumber(user.getPhone(), SCOPES, new OkHiRequestHandler<String>() {
             @Override
             public void onResult(String result) {
-                Intent intent = new Intent(activity, OkHeartActivity.class);
-                intent.putExtra("phone", user.getPhone());
-                intent.putExtra("firstName", user.getFirstName());
-                intent.putExtra("lastName", user.getLastName());
-                intent.putExtra("environment", environment);
-                intent.putExtra("authorizationToken", result);
-                intent.putExtra("primaryColor", primaryColor);
-                intent.putExtra("url", url);
-                intent.putExtra("appBarColor", appBarColor);
-                intent.putExtra("enableStreetView", enableStreetView);
-                intent.putExtra("developerName", developer);
-                intent.putExtra("organisationName", organisationName);
-                activity.startActivity(intent);
+                OkHeartActivity.setAuthorization(result);
             }
-
             @Override
             public void onError(OkHiException exception) {
-                okCollectCallback.onError(exception);
+                OkHeartActivity.setAuthorization("error");
+                OkHeartActivity.setOkHiException(exception);
             }
         });
     }

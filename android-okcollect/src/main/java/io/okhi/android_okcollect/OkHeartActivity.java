@@ -1,6 +1,5 @@
 package io.okhi.android_okcollect;
 
-import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +10,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
@@ -30,6 +26,10 @@ public class OkHeartActivity extends AppCompatActivity {
     private Boolean enableStreetView;
     private String phone, firstName, lastName,environment,developerName,
             authorizationToken,primaryColor,url,appBarColor, organisationName;
+    private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
+    private static String authorization;
+    private static OkHiException okHiException;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +65,7 @@ public class OkHeartActivity extends AppCompatActivity {
             displayLog("environment bundle.get error "+environment);
         }
         try{
-            authorizationToken = bundle.getString("authorizationToken");
+            //authorizationToken = bundle.getString("authorizationToken");
         }
         catch (Exception e){
             displayLog("authorizationToken bundle.get error "+authorizationToken);
@@ -143,31 +143,45 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payload = jsonObject.optJSONObject("payload");
             switch (message) {
                 case "app_state":
-                    launchHeart();
+                    checkAuthToken();
                     break;
                 case "location_created":
-                    displayLog("location_created");
                     processResponse(results);
                     break;
                 case "location_updated":
-                    displayLog("location_updated");
                     processResponse(results);
                     break;
                 case "location_selected":
-                    displayLog("location_selected");
                     processResponse(results);
                     break;
                 case "fatal_exit":
-                    displayLog("fatal_exit");
                     processError(results);
                     break;
                 default:
-                    displayLog("default");
                     processError(results);
                     break;
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
+        }
+    }
+
+    private void checkAuthToken(){
+        try {
+            while(getAuthorization() == null){
+                Thread.sleep(1000);
+            }
+            if(getAuthorization().equalsIgnoreCase("error")){
+                getOkCollectCallback().onError(getOkHiException());
+                finish();
+            }
+            else{
+                authorizationToken = getAuthorization();
+                launchHeart();
+            }
+        } catch (InterruptedException e) {
+            displayLog("InterruptedException error "+e.toString());
+            launchHeart();
         }
     }
 
@@ -302,7 +316,7 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setStreetName(streetName)
                     .setOtherInformation(displayTitle)
                     .build();
-            OkCollectApplication.getOkCollectCallback().onSuccess(user,location);
+            okCollectCallback.onSuccess(user,location);
             finish();
         }
         catch (Exception e){
@@ -324,7 +338,7 @@ public class OkHeartActivity extends AppCompatActivity {
             }
             jsonObject.put("payload", payload);
             jsonObject.put("message", "fatal_exit");
-            OkCollectApplication.getOkCollectCallback().onError(new OkHiException("fatal_exit", payload.toString()));
+            okCollectCallback.onError(new OkHiException("fatal_exit", payload.toString()));
             finish();
         }
         catch (Exception e){
@@ -352,6 +366,32 @@ public class OkHeartActivity extends AppCompatActivity {
         public void onPageFinished(WebView view, String urlString) {
         }
     }
+
+    public static String getAuthorization() {
+        return authorization;
+    }
+
+    public static void setAuthorization(String authorization) {
+        Log.i("OkHeartActivity", "three "+authorization);
+        OkHeartActivity.authorization = authorization;
+    }
+
+    public OkCollectCallback<OkHiUser, OkHiLocation> getOkCollectCallback() {
+        return okCollectCallback;
+    }
+
+    public static void setOkCollectCallback(OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback) {
+        OkHeartActivity.okCollectCallback = okCollectCallback;
+    }
+
+    public static OkHiException getOkHiException() {
+        return okHiException;
+    }
+
+    public static void setOkHiException(OkHiException okHiException) {
+        OkHeartActivity.okHiException = okHiException;
+    }
+
     private void displayLog(String log){
         Log.i("OkHeartActivity", log);
     }
