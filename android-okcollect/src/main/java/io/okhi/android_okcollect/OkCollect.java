@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import io.okhi.android_core.OkHiCore;
-import io.okhi.android_core.interfaces.OkHiSignInRequestHandler;
+import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.Constant;
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
@@ -50,15 +50,15 @@ public class OkCollect extends OkHiCore {
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
             OkHiLocation> okCollectCallback){
         OkCollectApplication.setOkCollectCallback(okCollectCallback);
-        anonymousSignWithPhoneNumber(user.getPhone(), SCOPES, new OkHiSignInRequestHandler() {
+        anonymousSignWithPhoneNumber(user.getPhone(), SCOPES, new OkHiRequestHandler<String>() {
             @Override
-            public void onSuccess(String authorizationToken) {
+            public void onResult(String result) {
                 Intent intent = new Intent(activity, OkHeartActivity.class);
                 intent.putExtra("phone", user.getPhone());
                 intent.putExtra("firstName", user.getFirstName());
                 intent.putExtra("lastName", user.getLastName());
                 intent.putExtra("environment", environment);
-                intent.putExtra("authorizationToken", authorizationToken);
+                intent.putExtra("authorizationToken", result);
                 intent.putExtra("primaryColor", primaryColor);
                 intent.putExtra("url", url);
                 intent.putExtra("appBarColor", appBarColor);
@@ -67,6 +67,7 @@ public class OkCollect extends OkHiCore {
                 intent.putExtra("organisationName", organisationName);
                 activity.startActivity(intent);
             }
+
             @Override
             public void onError(OkHiException exception) {
                 okCollectCallback.onError(exception);
