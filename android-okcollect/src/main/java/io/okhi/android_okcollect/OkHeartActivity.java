@@ -1,19 +1,26 @@
 package io.okhi.android_okcollect;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.okhi.android_core.OkHi;
+import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
@@ -29,6 +36,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
     private static String authorization;
     private static OkHiException okHiException;
+    OkHi okHi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +46,7 @@ public class OkHeartActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
         setupWebView();
+        okHi = new OkHi(this);
     }
     private void processBundle(Bundle bundle){
         try {
@@ -143,7 +152,7 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payload = jsonObject.optJSONObject("payload");
             switch (message) {
                 case "app_state":
-                    checkAuthToken();
+                    startAddressCreation();
                     break;
                 case "location_created":
                     processResponse(results);
@@ -163,6 +172,13 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
+        }
+    }
+
+    private void startAddressCreation(){
+        boolean canStartAddressCreation = canStartAddressCreation();
+        if(canStartAddressCreation){
+            checkAuthToken();
         }
     }
 
@@ -266,7 +282,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         }
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
-                        Log.i("okheart", jsonObject.toString().replace("\\", ""));
+                        displayLog( jsonObject.toString().replace("\\", ""));
                         myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" +
                                 jsonObject.toString().replace("\\", "") + ")", null);
                     } catch (Exception e) {
@@ -367,12 +383,50 @@ public class OkHeartActivity extends AppCompatActivity {
         }
     }
 
+    class Handler implements OkHiRequestHandler<Boolean> {
+        @Override
+        public void onResult(Boolean result) {
+            checkAuthToken();
+        }
+
+        @Override
+        public void onError(OkHiException exception) {
+            getOkCollectCallback().onError(exception);
+            finish();
+        }
+    }
+
+    private boolean canStartAddressCreation() {
+
+        if (!OkHi.isLocationPermissionGranted(getApplicationContext())) {
+            okHi.requestLocationPermission("Hey we need location permission", "Pretty please..", new Handler());
+        } else if (!OkHi.isGooglePlayServicesAvailable(getApplicationContext())) {
+            okHi.requestEnableGooglePlayServices(new Handler());
+        } else if (!OkHi.isLocationServicesEnabled(getApplicationContext())) {
+            okHi.requestEnableLocationServices(new Handler());
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        okHi.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        okHi.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     public static String getAuthorization() {
         return authorization;
     }
 
     public static void setAuthorization(String authorization) {
-        Log.i("OkHeartActivity", "three "+authorization);
         OkHeartActivity.authorization = authorization;
     }
 
