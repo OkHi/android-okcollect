@@ -27,6 +27,10 @@ import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 
+import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL;
+import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL;
+import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL;
+
 
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
@@ -36,6 +40,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
     private static String authorization;
     private static OkHiException okHiException;
+    private String params;
     OkHi okHi;
 
     @Override
@@ -48,72 +53,32 @@ public class OkHeartActivity extends AppCompatActivity {
         setupWebView();
         okHi = new OkHi(this);
     }
+
     private void processBundle(Bundle bundle){
         try {
-            phone = bundle.getString("phone");
+            params = bundle.getString("params");
+            processParams(params);
         }
         catch (Exception e){
-            displayLog("phone bundle.get error "+phone);
+            displayLog("params bundle.get error "+e.toString());
         }
+    }
+
+    private void processParams(String params){
         try{
-            firstName = bundle.getString("firstName");
-        }
-        catch (Exception e){
-            displayLog("firstName bundle.get error "+firstName);
-        }
-        try{
-            lastName = bundle.getString("lastName");
-        }
-        catch (Exception e){
-            displayLog("lastName bundle.get error "+lastName);
-        }
-        try{
-            environment = bundle.getString("environment");
-        }
-        catch (Exception e){
-            displayLog("environment bundle.get error "+environment);
-        }
-        try{
-            //authorizationToken = bundle.getString("authorizationToken");
-        }
-        catch (Exception e){
-            displayLog("authorizationToken bundle.get error "+authorizationToken);
-        }
-        try{
-            primaryColor = bundle.getString("primaryColor");
-        }
-        catch (Exception e){
-            displayLog("primaryColor bundle.get error "+primaryColor);
-        }
-        try{
-            developerName = bundle.getString("developerName");
-        }
-        catch (Exception e){
-            displayLog("developerName bundle.get error "+developerName);
-        }
-        try{
-            url = bundle.getString("url");
-        }
-        catch (Exception e){
-            displayLog("url bundle.get error "+url);
-        }
-        try{
-            appBarColor = bundle.getString("appBarColor");
-        }
-        catch (Exception e){
-            displayLog("appBarColor bundle.get error "+appBarColor);
-        }
-        try{
-            organisationName = bundle.getString("organisationName");
-        }
-        catch (Exception e){
-            displayLog("organisationName bundle.get error "+organisationName);
-        }
-        try{
-            enableStreetView = bundle.getBoolean("enableStreetView");
-        }
-        catch (Exception e){
-            displayLog("enableStreetView bundle.get error "+enableStreetView);
+            JSONObject paramsObject = new JSONObject(params);
+            phone = paramsObject.optString("phone");
+            firstName = paramsObject.optString("firstName");
+            lastName = paramsObject.optString("lastName");
+            environment = paramsObject.optString("environment");
+            primaryColor = paramsObject.optString("primaryColor");
+            url = paramsObject.optString("url");
+            appBarColor = paramsObject.optString("appBarColor");
+            enableStreetView = paramsObject.optBoolean("enableStreetView");
+            developerName = paramsObject.optString("developerName");
+            organisationName = paramsObject.optString("organisationName");
+        } catch (Exception e){
+            displayLog("Json error "+e.toString());
         }
     }
 
@@ -124,18 +89,15 @@ public class OkHeartActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setGeolocationEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setAppCacheEnabled(true);
-        webSettings.setDatabaseEnabled(true);
-        webSettings.setDomStorageEnabled(true);
         myWebView.addJavascriptInterface(new WebAppInterface(io.okhi.android_okcollect.OkHeartActivity.this), "Android");
         if(environment.equalsIgnoreCase(OkHiMode.PROD)){
-            myWebView.loadUrl("https://manager-v5.okhi.io");
+            myWebView.loadUrl(PROD_HEART_URL);
         }
         else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
-            myWebView.loadUrl("https://sandbox-manager-v5.okhi.io");
+            myWebView.loadUrl(SANDBOX_HEART_URL);
         }
         else{
-            myWebView.loadUrl("https://dev-manager-v5.okhi.io");
+            myWebView.loadUrl(DEV_HEART_URL);
         }
         myWebView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -152,7 +114,7 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payload = jsonObject.optJSONObject("payload");
             switch (message) {
                 case "app_state":
-                    startAddressCreation();
+                    checkAuthToken();
                     break;
                 case "location_created":
                     processResponse(results);
@@ -172,13 +134,6 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
-        }
-    }
-
-    private void startAddressCreation(){
-        boolean canStartAddressCreation = canStartAddressCreation();
-        if(canStartAddressCreation){
-            checkAuthToken();
         }
     }
 
@@ -381,45 +336,6 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String urlString) {
         }
-    }
-
-    class Handler implements OkHiRequestHandler<Boolean> {
-        @Override
-        public void onResult(Boolean result) {
-            checkAuthToken();
-        }
-
-        @Override
-        public void onError(OkHiException exception) {
-            getOkCollectCallback().onError(exception);
-            finish();
-        }
-    }
-
-    private boolean canStartAddressCreation() {
-
-        if (!OkHi.isLocationPermissionGranted(getApplicationContext())) {
-            okHi.requestLocationPermission("Hey we need location permission", "Pretty please..", new Handler());
-        } else if (!OkHi.isGooglePlayServicesAvailable(getApplicationContext())) {
-            okHi.requestEnableGooglePlayServices(new Handler());
-        } else if (!OkHi.isLocationServicesEnabled(getApplicationContext())) {
-            okHi.requestEnableLocationServices(new Handler());
-        } else {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        okHi.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        okHi.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public static String getAuthorization() {

@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import io.okhi.android_core.OkHiCore;
 import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiAppContext;
@@ -46,18 +48,31 @@ public class OkCollect extends OkHiCore {
             OkHiLocation> okCollectCallback){
         getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("phone", user.getPhone());
-        intent.putExtra("firstName", user.getFirstName());
-        intent.putExtra("lastName", user.getLastName());
-        intent.putExtra("environment", environment);
-        intent.putExtra("primaryColor", primaryColor);
-        intent.putExtra("url", url);
-        intent.putExtra("appBarColor", appBarColor);
-        intent.putExtra("enableStreetView", enableStreetView);
-        intent.putExtra("developerName", developer);
-        intent.putExtra("organisationName", organisationName);
+        intent.putExtra("params", getParameters(user));
         activity.startActivity(intent);
         OkHeartActivity.setOkCollectCallback(okCollectCallback);
+    }
+
+    private String getParameters(OkHiUser user){
+        String params = null;
+        try{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("phone", user.getPhone());
+            jsonObject.put("firstName", user.getFirstName());
+            jsonObject.put("lastName", user.getLastName());
+            jsonObject.put("environment", environment);
+            jsonObject.put("primaryColor", primaryColor);
+            jsonObject.put("url", url);
+            jsonObject.put("appBarColor", appBarColor);
+            jsonObject.put("enableStreetView", enableStreetView);
+            jsonObject.put("developerName", developer);
+            jsonObject.put("organisationName", organisationName);
+            params = jsonObject.toString();
+        }
+        catch (Exception e){
+            displayLog("Json processing error "+e.toString());
+        }
+        return params;
     }
 
     private void getAuth(OkHiUser user){

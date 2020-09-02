@@ -11,6 +11,7 @@ import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
+import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
@@ -19,8 +20,6 @@ import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String DEV_CLIENT_KEY = "4d380065-71e5-48b8-8fb3-29fe61299c4b";
-    public static final String DEV_CLIENT_BRANCH = "yhCvQnGG1z";
 
     private static final OkHiAppContext okhiAppContext = new OkHiAppContext.Builder("dev")
             .setDeveloper("OkHi")
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             .setAppMeta("OkHi", "1.0.0", 1)
             .build();
 
-    private static final OkHiAuth okhiAuth = new OkHiAuth.Builder(DEV_CLIENT_BRANCH, DEV_CLIENT_KEY)
+    private static final OkHiAuth okhiAuth = new OkHiAuth.Builder(Secret.branch, Secret.clientkey)
             .withContext(okhiAppContext)
             .build();
 
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final OkHiUser user = new OkHiUser.Builder("+254713567907")
+        final OkHiUser user = new OkHiUser.Builder(Secret.phone)
                 .withFirstName("Ramogi")
                 .withLastName("Ochola")
                 .build();
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         okCollect = new OkCollect.Builder(okhiAuth, this)
-                //.withTheme(theme)
+                .withTheme(theme)
                 .withConfig(config)
                 .build();
 
@@ -63,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 displayLog("launch button clicked");
                 okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                     @Override
-                    public void onSuccess(OkHiUser result1, OkHiLocation result2) {
-                        displayLog("onsuccess "+result1.getPhone()+" "+result2.getId());
+                    public void onSuccess(OkHiUser user, OkHiLocation location) {
+                        displayLog("onsuccess "+user.getPhone()+" "+location.getId());
                     }
 
                     @Override
