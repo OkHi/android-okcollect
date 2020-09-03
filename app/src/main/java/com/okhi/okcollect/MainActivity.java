@@ -9,9 +9,11 @@ import android.widget.Button;
 
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
+import io.okhi.android_core.models.OkHiDeveloperType;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
+import io.okhi.android_core.models.OkHiPlatformType;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
@@ -22,8 +24,8 @@ import io.okhi.android_okcollect.utilities.OkHiTheme;
 public class MainActivity extends AppCompatActivity {
 
     private static final OkHiAppContext okhiAppContext = new OkHiAppContext.Builder("dev")
-            .setDeveloper("OkHi")
-            .setPlatform("Android")
+            .setDeveloper(OkHiDeveloperType.OKHI)
+            .setPlatform(OkHiPlatformType.ANDROID)
             .setAppMeta("OkHi", "1.0.0", 1)
             .build();
 
