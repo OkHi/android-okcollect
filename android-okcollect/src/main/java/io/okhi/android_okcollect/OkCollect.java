@@ -48,12 +48,13 @@ public class OkCollect extends OkHiCore {
             OkHiLocation> okCollectCallback){
         getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("params", getParameters(user));
+        intent.putExtra("params", getParameters(user, okCollectCallback));
         activity.startActivity(intent);
         OkHeartActivity.setOkCollectCallback(okCollectCallback);
     }
 
-    private String getParameters(OkHiUser user){
+    private String getParameters(OkHiUser user, OkCollectCallback <OkHiUser,
+            OkHiLocation> okCollectCallback ){
         String params = null;
         try{
             JSONObject jsonObject = new JSONObject();
@@ -71,6 +72,7 @@ public class OkCollect extends OkHiCore {
         }
         catch (Exception e){
             displayLog("Json processing error "+e.toString());
+            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
         }
         return params;
     }
