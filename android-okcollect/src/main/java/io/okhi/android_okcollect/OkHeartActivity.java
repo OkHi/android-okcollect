@@ -61,6 +61,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("params bundle.get error "+e.toString());
+            getOkCollectCallback().onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
         }
     }
 
