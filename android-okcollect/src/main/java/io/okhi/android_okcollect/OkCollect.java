@@ -72,7 +72,7 @@ public class OkCollect extends OkHiCore {
         }
         catch (Exception e){
             displayLog("Json processing error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
         return params;
     }

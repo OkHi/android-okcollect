@@ -63,7 +63,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("params bundle.get error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -82,7 +82,7 @@ public class OkHeartActivity extends AppCompatActivity {
             organisationName = paramsObject.optString("organisationName");
         } catch (Exception e){
             displayLog("Json error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -138,7 +138,7 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -247,14 +247,14 @@ public class OkHeartActivity extends AppCompatActivity {
                                 jsonObject.toString().replace("\\", "") + ")", null);
                     } catch (Exception e) {
                         displayLog( "Json object error "+e.toString());
-                        okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+                        okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
                     }
                 }
             });
         }
         catch (Exception e){
             displayLog("error running on UI thread "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -264,25 +264,37 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payloadObject = responseObject.optJSONObject("payload");
             JSONObject locationObject = payloadObject.optJSONObject("location");
             JSONObject userObject = payloadObject.optJSONObject("user");
-            OkHiUser user = new OkHiUser.Builder(userObject.optString("phone"))
-                    .withFirstName(userObject.optString("first_name"))
-                    .withLastName(userObject.optString("last_name"))
-                    .withOkHiUserId(userObject.optString("id"))
+            OkHiUser user = new OkHiUser.Builder(userObject.optString("phone",null))
+                    .withFirstName(userObject.optString("first_name",null))
+                    .withLastName(userObject.optString("last_name",null))
+                    .withOkHiUserId(userObject.optString("id",null))
                     .build();
-            String ualId = locationObject.optString("id");
-            Double lat = locationObject.optJSONObject("geo_point").getDouble("lat");
-            Double lng = locationObject.optJSONObject("geo_point").getDouble("lon");
-            String streetName = locationObject.optString("street_name");
-            String propertyName = locationObject.optString("property_name");
-            String propertyNumber = locationObject.optString("property_number");
-            String directions = locationObject.optString("directions");
-            String placeId = locationObject.optString("place_id");
-            String url = locationObject.optString("url");
-            String title = locationObject.optString("title");
-            String photo = locationObject.optString("photo");
-            String subtitle = locationObject.optString("subtitle");
-            String plusCode = locationObject.optString("plus_code");
-            String displayTitle = locationObject.optString("display_title");
+            String ualId = locationObject.optString("id", null);
+            JSONObject geoPointObject = locationObject.optJSONObject("geo_point");
+            Double lat = null;
+            Double lng = null;
+            if(geoPointObject != null){
+                lat = locationObject.optJSONObject("geo_point").optDouble("lat");
+                lng = locationObject.optJSONObject("geo_point").optDouble("lon");
+            }
+            String streetName = locationObject.optString("street_name",null);
+            String propertyName = locationObject.optString("property_name",null);
+            String propertyNumber = locationObject.optString("property_number",null);
+            String directions = locationObject.optString("directions",null);
+            String placeId = locationObject.optString("place_id",null);
+            String url = locationObject.optString("url",null);
+            String title = locationObject.optString("title",null);
+            String photo = locationObject.optString("photo",null);
+            String subtitle = locationObject.optString("subtitle",null);
+            String plusCode = locationObject.optString("plus_code",null);
+            String displayTitle = locationObject.optString("display_title",null);
+            JSONObject streetViewObject = locationObject.optJSONObject("street_view");
+            String streetViewUrl = null;
+            String streetViewPanoId = null;
+            if(streetViewObject != null){
+                streetViewUrl = streetViewObject.optString("url",null);
+                streetViewPanoId = streetViewObject.optString("pano_id" ,null);
+            }
             OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
                     .setDirections(directions)
                     .setUrl(url)
@@ -292,14 +304,18 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setSubtitle(subtitle)
                     .setPropertyName(propertyName)
                     .setStreetName(streetName)
-                    .setOtherInformation(displayTitle)
+                    .setStreetViewPanoId(streetViewPanoId)
+                    .setStreetViewPanoUrl(streetViewUrl)
+                    .setPhoto(photo)
+                    .setUrl(url)
+                    .setPropertyNumber(propertyNumber)
                     .build();
             okCollectCallback.onSuccess(user,location);
             finish();
         }
         catch (Exception e){
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -315,12 +331,12 @@ public class OkHeartActivity extends AppCompatActivity {
                     payload.put("error", backuppayload);
                 }
             }
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", payload.toString()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
             finish();
         }
         catch (Exception e){
             displayLog("json error exception "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -348,7 +364,7 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", error.getDescription().toString()));
+            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
         }
     }
 
