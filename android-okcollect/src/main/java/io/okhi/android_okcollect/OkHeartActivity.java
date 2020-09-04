@@ -63,7 +63,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("params bundle.get error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -82,7 +82,7 @@ public class OkHeartActivity extends AppCompatActivity {
             organisationName = paramsObject.optString("organisationName");
         } catch (Exception e){
             displayLog("Json error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -138,7 +138,7 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -247,14 +247,14 @@ public class OkHeartActivity extends AppCompatActivity {
                                 jsonObject.toString().replace("\\", "") + ")", null);
                     } catch (Exception e) {
                         displayLog( "Json object error "+e.toString());
-                        okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+                        okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
                     }
                 }
             });
         }
         catch (Exception e){
             displayLog("error running on UI thread "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -299,7 +299,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -315,12 +315,12 @@ public class OkHeartActivity extends AppCompatActivity {
                     payload.put("error", backuppayload);
                 }
             }
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", payload.toString()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
             finish();
         }
         catch (Exception e){
             displayLog("json error exception "+e.toString());
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", e.getMessage()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
     }
 
@@ -348,7 +348,7 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            okCollectCallback.onError(new OkHiException("OkHiException.UNKNOWN_ERROR", error.getDescription().toString()));
+            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
         }
     }
 
