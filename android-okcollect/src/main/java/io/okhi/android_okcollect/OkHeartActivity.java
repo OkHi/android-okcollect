@@ -264,7 +264,7 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payloadObject = responseObject.optJSONObject("payload");
             JSONObject locationObject = payloadObject.optJSONObject("location");
             JSONObject userObject = payloadObject.optJSONObject("user");
-            OkHiUser user = new OkHiUser.Builder(userObject.optString("phone",null))
+            final OkHiUser user = new OkHiUser.Builder(userObject.optString("phone",null))
                     .withFirstName(userObject.optString("first_name",null))
                     .withLastName(userObject.optString("last_name",null))
                     .withOkHiUserId(userObject.optString("id",null))
@@ -295,7 +295,7 @@ public class OkHeartActivity extends AppCompatActivity {
                 streetViewUrl = streetViewObject.optString("url",null);
                 streetViewPanoId = streetViewObject.optString("pano_id" ,null);
             }
-            OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
+            final OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
                     .setDirections(directions)
                     .setUrl(url)
                     .setPlaceId(placeId)
@@ -310,7 +310,12 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setUrl(url)
                     .setPropertyNumber(propertyNumber)
                     .build();
-            okCollectCallback.onSuccess(user,location);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    okCollectCallback.onSuccess(user,location);
+                }
+            }).start();
             finish();
         }
         catch (Exception e){
