@@ -64,6 +64,7 @@ public class OkHeartActivity extends AppCompatActivity {
         catch (Exception e){
             displayLog("params bundle.get error "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -83,6 +84,7 @@ public class OkHeartActivity extends AppCompatActivity {
         } catch (Exception e){
             displayLog("Json error "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -139,6 +141,7 @@ public class OkHeartActivity extends AppCompatActivity {
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -248,6 +251,7 @@ public class OkHeartActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         displayLog( "Json object error "+e.toString());
                         okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+                        finish();
                     }
                 }
             });
@@ -255,6 +259,7 @@ public class OkHeartActivity extends AppCompatActivity {
         catch (Exception e){
             displayLog("error running on UI thread "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -316,6 +321,7 @@ public class OkHeartActivity extends AppCompatActivity {
         catch (Exception e){
             displayLog("Json object error "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -337,6 +343,7 @@ public class OkHeartActivity extends AppCompatActivity {
         catch (Exception e){
             displayLog("json error exception "+e.toString());
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            finish();
         }
     }
 
@@ -365,6 +372,7 @@ public class OkHeartActivity extends AppCompatActivity {
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
             okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+            finish();
         }
     }
 
