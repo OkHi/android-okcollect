@@ -63,7 +63,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("params bundle.get error "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
     }
@@ -83,7 +83,7 @@ public class OkHeartActivity extends AppCompatActivity {
             organisationName = paramsObject.optString("organisationName");
         } catch (Exception e){
             displayLog("Json error "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
     }
@@ -140,7 +140,7 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
     }
@@ -151,7 +151,7 @@ public class OkHeartActivity extends AppCompatActivity {
                 Thread.sleep(1000);
             }
             if(getAuthorization().equalsIgnoreCase("error")){
-                okCollectCallback.onError(getOkHiException());
+                runCallback(getOkHiException());
                 finish();
             }
             else{
@@ -250,7 +250,7 @@ public class OkHeartActivity extends AppCompatActivity {
                                 jsonObject.toString().replace("\\", "") + ")", null);
                     } catch (Exception e) {
                         displayLog( "Json object error "+e.toString());
-                        okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+                        runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
                         finish();
                     }
                 }
@@ -258,7 +258,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
         catch (Exception e){
             displayLog("error running on UI thread "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
     }
@@ -269,7 +269,7 @@ public class OkHeartActivity extends AppCompatActivity {
             JSONObject payloadObject = responseObject.optJSONObject("payload");
             JSONObject locationObject = payloadObject.optJSONObject("location");
             JSONObject userObject = payloadObject.optJSONObject("user");
-            OkHiUser user = new OkHiUser.Builder(userObject.optString("phone",null))
+            final OkHiUser user = new OkHiUser.Builder(userObject.optString("phone",null))
                     .withFirstName(userObject.optString("first_name",null))
                     .withLastName(userObject.optString("last_name",null))
                     .withOkHiUserId(userObject.optString("id",null))
@@ -300,7 +300,7 @@ public class OkHeartActivity extends AppCompatActivity {
                 streetViewUrl = streetViewObject.optString("url",null);
                 streetViewPanoId = streetViewObject.optString("pano_id" ,null);
             }
-            OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
+            final OkHiLocation location = new OkHiLocation.Builder(ualId,lat,lng)
                     .setDirections(directions)
                     .setUrl(url)
                     .setPlaceId(placeId)
@@ -315,14 +315,24 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setUrl(url)
                     .setPropertyNumber(propertyNumber)
                     .build();
-            okCollectCallback.onSuccess(user,location);
+            runCallback(user,location);
             finish();
         }
         catch (Exception e){
             displayLog("Json object error "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
+    }
+
+    private void runCallback(final OkHiUser user, final OkHiLocation location) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                okCollectCallback.onSuccess(user, location);
+            }
+        }).start();
+        finish();
     }
 
     private void processError(String response){
@@ -337,14 +347,24 @@ public class OkHeartActivity extends AppCompatActivity {
                     payload.put("error", backuppayload);
                 }
             }
-            okCollectCallback.onError(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
             finish();
         }
         catch (Exception e){
             displayLog("json error exception "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
+    }
+
+    private void runCallback(final OkHiException exception) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                okCollectCallback.onError(exception);
+            }
+        }).start();
+        finish();
     }
 
     @Override
@@ -371,7 +391,7 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
             finish();
         }
     }

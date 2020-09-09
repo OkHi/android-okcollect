@@ -21,7 +21,7 @@ import io.okhi.android_okcollect.utilities.OkHiTheme;
 
 import static io.okhi.android_okcollect.utilities.Constants.SCOPES;
 
-/** OkCollect class .
+/** OkCollect class.
  * @author Ramogi Ochola
  * @author www.okhi.com
  */
@@ -79,7 +79,6 @@ public class OkCollect extends OkHiCore {
         }
         catch (Exception e){
             displayLog("Json processing error "+e.toString());
-            okCollectCallback.onError(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
         }
         return params;
     }
