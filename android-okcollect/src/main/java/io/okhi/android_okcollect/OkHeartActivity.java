@@ -391,7 +391,7 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+            //runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
             finish();
         }
     }

@@ -10,7 +10,6 @@
         <activity
             android:exported="true"
             android:theme="@style/AppTheme"
-            android:noHistory="true"
             android:name="io.okhi.android_okcollect.OkHeartActivity">
 
         </activity>

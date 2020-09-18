@@ -55,13 +55,12 @@ public class OkCollect extends OkHiCore {
             OkHiLocation> okCollectCallback){
         getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("params", getParameters(user, okCollectCallback));
+        intent.putExtra("params", getParameters(user));
         activity.startActivity(intent);
         OkHeartActivity.setOkCollectCallback(okCollectCallback);
     }
 
-    private String getParameters(OkHiUser user, OkCollectCallback <OkHiUser,
-            OkHiLocation> okCollectCallback ){
+    private String getParameters(OkHiUser user ){
         String params = null;
         try{
             JSONObject jsonObject = new JSONObject();
