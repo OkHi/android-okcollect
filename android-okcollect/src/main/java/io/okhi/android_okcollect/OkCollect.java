@@ -34,7 +34,7 @@ public class OkCollect extends OkHiCore {
     private String organisationName;
     private String developer;
     private Boolean enableStreetView;
-    private Activity activity;
+    private static Activity activity;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);
@@ -141,6 +141,14 @@ public class OkCollect extends OkHiCore {
 
     private void setOkHiAppContext(OkHiAppContext okHiAppContext) {
         this.okHiAppContext = okHiAppContext;
+    }
+
+    public static Activity getActivity() {
+        return activity;
+    }
+
+    private void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     private String getPrimaryColor() {

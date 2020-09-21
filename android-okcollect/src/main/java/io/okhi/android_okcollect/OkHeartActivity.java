@@ -1,9 +1,7 @@
 package io.okhi.android_okcollect;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
@@ -12,17 +10,13 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.okhi.android_core.OkHi;
-import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
@@ -326,12 +320,12 @@ public class OkHeartActivity extends AppCompatActivity {
     }
 
     private void runCallback(final OkHiUser user, final OkHiLocation location) {
-        new Thread(new Runnable() {
+        OkCollect.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 okCollectCallback.onSuccess(user, location);
             }
-        }).start();
+        });
         finish();
     }
 
@@ -358,12 +352,11 @@ public class OkHeartActivity extends AppCompatActivity {
     }
 
     private void runCallback(final OkHiException exception) {
-        new Thread(new Runnable() {
-            @Override
+        OkCollect.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 okCollectCallback.onError(exception);
             }
-        }).start();
+        });
         finish();
     }
 
@@ -391,7 +384,7 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            //runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
             finish();
         }
     }
