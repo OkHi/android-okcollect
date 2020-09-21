@@ -1,4 +1,4 @@
-package io.okhi.android_okcollect;
+package io.okhi.android_okcollect.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -21,7 +21,11 @@ import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_okcollect.BuildConfig;
+import io.okhi.android_okcollect.OkCollect;
+import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
+import io.okhi.android_okcollect.interfaces.WebAppInterface;
 
 import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL;
 import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL;
@@ -89,7 +93,7 @@ public class OkHeartActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setGeolocationEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        myWebView.addJavascriptInterface(new WebAppInterface(io.okhi.android_okcollect.OkHeartActivity.this), "Android");
+        myWebView.addJavascriptInterface(new WebAppInterface(OkHeartActivity.this), "Android");
         if(environment.equalsIgnoreCase(OkHiMode.PROD)){
             myWebView.loadUrl(PROD_HEART_URL);
         }
