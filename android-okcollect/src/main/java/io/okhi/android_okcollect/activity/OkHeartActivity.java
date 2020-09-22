@@ -113,6 +113,7 @@ public class OkHeartActivity extends AppCompatActivity {
 
     public void receiveMessage(String results) {
         try {
+            displayLog(results);
             final JSONObject jsonObject = new JSONObject(results);
             String message = jsonObject.optString("message");
             JSONObject payload = jsonObject.optJSONObject("payload");
@@ -131,6 +132,9 @@ public class OkHeartActivity extends AppCompatActivity {
                     break;
                 case "fatal_exit":
                     processError(results);
+                    break;
+                case "exit_app":
+                    exitApp(results);
                     break;
                 default:
                     processError(results);
@@ -353,6 +357,11 @@ public class OkHeartActivity extends AppCompatActivity {
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
+    }
+
+    private void exitApp(String response){
+        runCallback(new OkHiException( "exit_app", "user exited okcollect"));
+        finish();
     }
 
     private void runCallback(final OkHiException exception) {
