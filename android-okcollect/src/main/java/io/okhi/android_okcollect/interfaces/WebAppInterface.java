@@ -12,11 +12,7 @@ public class WebAppInterface {
     }
     @JavascriptInterface
     public void receiveMessage(String results) {
-        displayLog(results);
         mContext.receiveMessage(results);
-    }
-    private void displayLog(String log){
-        Log.i("WebAppInterface", log);
     }
 }
 

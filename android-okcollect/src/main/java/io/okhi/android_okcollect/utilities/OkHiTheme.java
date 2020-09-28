@@ -8,20 +8,23 @@ import androidx.annotation.NonNull;
  */
 public class OkHiTheme {
     private String primaryColor;
-    private String url;
+    private String logoUrl;
     private String appBarColor;
+    private Boolean appBarVisible;
 
     private OkHiTheme(Builder builder) {
         this.primaryColor = builder.primaryColor;
-        this.url = builder.url;
+        this.logoUrl = builder.logoUrl;
         this.appBarColor = builder.appBarColor;
+        this.appBarVisible = builder.appBarVisible;
     }
     /**OkHiTheme builder class
      */
     public static class Builder {
         private String primaryColor;
-        private String url;
+        private String logoUrl;
         private String appBarColor;
+        private Boolean appBarVisible = true;
         /**OkHiTheme builder
          * @param primaryColor
          */
@@ -29,11 +32,17 @@ public class OkHiTheme {
             this.primaryColor = primaryColor;
         }
         /**OkHiTheme builder enabling the appbar to be displayed in the webview
-         * @param url
-         * @param appBarColor
+         * @param logoUrl Optional. Sets the logo image to display in your app bar
          */
-        public Builder withAppBar(@NonNull String url, @NonNull String appBarColor){
-            this.url = url;
+        public Builder setAppBarLogo(@NonNull String logoUrl){
+            this.logoUrl = logoUrl;
+            return this;
+        }
+
+        /**
+         * @param appBarColor Optional. Sets the color of your app bar
+         */
+        public Builder setAppBarColor(@NonNull String appBarColor){
             this.appBarColor = appBarColor;
             return this;
         }
@@ -54,13 +63,23 @@ public class OkHiTheme {
     }
     /** Get the value of the url for the displayed logo
      */
-    public String getUrl() {
-        return url;
+    public String getLogoUrl() {
+        return logoUrl;
     }
 
-    private void setUrl(String url) {
-        this.url = url;
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
+    /** Is the app bar visible?
+     */
+    public Boolean getAppBarVisible() {
+        return appBarVisible;
+    }
+
+    public void setAppBarVisible(Boolean appBarVisible) {
+        this.appBarVisible = appBarVisible;
+    }
+
     /** Get the value of the color to be used in the appbar
      */
     public String getAppBarColor() {

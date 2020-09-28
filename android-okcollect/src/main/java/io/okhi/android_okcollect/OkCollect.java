@@ -29,21 +29,23 @@ import static io.okhi.android_okcollect.utilities.Constants.SCOPES;
 public class OkCollect extends OkHiCore {
     private OkHiAppContext okHiAppContext;
     private String primaryColor;
-    private String url;
+    private String logoUrl;
     private String appBarColor;
     private String environment;
     private String organisationName;
     private String developer;
     private Boolean enableStreetView;
+    private Boolean enableAppBar;
     private static Activity activity;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);
         this.activity = builder.activity;
         this.primaryColor = builder.primaryColor;
-        this.url = builder.url;
+        this.logoUrl = builder.logoUrl;
         this.appBarColor = builder.appBarColor;
         this.enableStreetView = builder.enableStreetView;
+        this.enableAppBar = builder.enableAppBar;
         this.environment = builder.okHiAuth.getContext().getMode();
         this.organisationName = builder.okHiAuth.getContext().getAppMeta().getName();
         this.developer = builder.okHiAuth.getContext().getDeveloper();
@@ -70,9 +72,10 @@ public class OkCollect extends OkHiCore {
             jsonObject.put("lastName", user.getLastName());
             jsonObject.put("environment", environment);
             jsonObject.put("primaryColor", primaryColor);
-            jsonObject.put("url", url);
+            jsonObject.put("logoUrl", logoUrl);
             jsonObject.put("appBarColor", appBarColor);
             jsonObject.put("enableStreetView", enableStreetView);
+            jsonObject.put("enableAppBar", enableAppBar);
             jsonObject.put("developerName", developer);
             jsonObject.put("organisationName", organisationName);
             params = jsonObject.toString();
@@ -101,9 +104,10 @@ public class OkCollect extends OkHiCore {
     public static class Builder {
         private OkHiAuth okHiAuth;
         private String primaryColor;
-        private String url;
+        private String logoUrl;
         private String appBarColor;
         private Boolean enableStreetView;
+        private Boolean enableAppBar;
         private Activity activity;
         /** OkCollect builder.
          * @param okHiAuth the auth object to enable authentication.
@@ -114,16 +118,19 @@ public class OkCollect extends OkHiCore {
             this.activity = activity;
         }
         /** Configure the look and feel of the webview.
-         * @param okHiTheme param to configure the look and feel of the webview.
+         * Makes the app bar visible. Default is false, app bar not visible.
+         * @param okHiTheme object to configure the look and feel of the webview.
          */
         public Builder withTheme(@NonNull OkHiTheme okHiTheme){
             this.primaryColor = okHiTheme.getPrimaryColor();
-            this.url = okHiTheme.getUrl();
+            this.logoUrl = okHiTheme.getLogoUrl();
             this.appBarColor = okHiTheme.getAppBarColor();
+            this.enableAppBar = okHiTheme.getAppBarVisible();
             return this;
         }
         /** launch okhi address creation.
-         * @param okHiConfig param to enable streetview.
+         * Enables streetview functionality in address creation. Default is false, streetview functionality not enabled.
+         * @param okHiConfig object to enable streetview.
          */
         public Builder withConfig(@NonNull OkHiConfig okHiConfig){
             this.enableStreetView = okHiConfig.getEnableStreetView();
@@ -136,53 +143,10 @@ public class OkCollect extends OkHiCore {
         }
     }
 
-    private OkHiAppContext getOkHiAppContext() {
-        return okHiAppContext;
-    }
-
-    private void setOkHiAppContext(OkHiAppContext okHiAppContext) {
-        this.okHiAppContext = okHiAppContext;
-    }
-
     public static Activity getActivity() {
         return activity;
     }
 
-    private void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
-    private String getPrimaryColor() {
-        return primaryColor;
-    }
-
-    private void setPrimaryColor(String primaryColor) {
-        this.primaryColor = primaryColor;
-    }
-
-    private String getUrl() {
-        return url;
-    }
-
-    private void setUrl(String url) {
-        this.url = url;
-    }
-
-    private String getAppBarColor() {
-        return appBarColor;
-    }
-
-    private void setAppBarColor(String appBarColor) {
-        this.appBarColor = appBarColor;
-    }
-
-    private Boolean getEnableStreetView() {
-        return enableStreetView;
-    }
-
-    private void setEnableStreetView(Boolean enableStreetView) {
-        this.enableStreetView = enableStreetView;
-    }
     private void displayLog(String log){
         Log.i("OkCollect", log);
     }

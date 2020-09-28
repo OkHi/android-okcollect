@@ -3,10 +3,12 @@ package io.okhi.android_okcollect.activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -34,9 +36,9 @@ import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL;
 
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
-    private Boolean enableStreetView;
+    private Boolean enableStreetView, enableAppBar;
     private String phone, firstName, lastName,environment,developerName,
-            authorizationToken,primaryColor,url,appBarColor, organisationName;
+            authorizationToken,primaryColor,logoUrl,appBarColor, organisationName;
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
     private static String authorization;
     private static OkHiException okHiException;
@@ -60,7 +62,6 @@ public class OkHeartActivity extends AppCompatActivity {
             processParams(params);
         }
         catch (Exception e){
-            displayLog("params bundle.get error "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
@@ -74,13 +75,13 @@ public class OkHeartActivity extends AppCompatActivity {
             lastName = paramsObject.optString("lastName");
             environment = paramsObject.optString("environment");
             primaryColor = paramsObject.optString("primaryColor");
-            url = paramsObject.optString("url");
+            logoUrl = paramsObject.optString("logoUrl");
             appBarColor = paramsObject.optString("appBarColor");
             enableStreetView = paramsObject.optBoolean("enableStreetView");
+            enableAppBar = paramsObject.optBoolean("enableAppBar");
             developerName = paramsObject.optString("developerName");
             organisationName = paramsObject.optString("organisationName");
         } catch (Exception e){
-            displayLog("Json error "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
@@ -93,6 +94,7 @@ public class OkHeartActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setGeolocationEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        myWebView.setWebContentsDebuggingEnabled(false);
         myWebView.addJavascriptInterface(new WebAppInterface(OkHeartActivity.this), "Android");
         if(environment.equalsIgnoreCase(OkHiMode.PROD)){
             myWebView.loadUrl(PROD_HEART_URL);
@@ -113,7 +115,6 @@ public class OkHeartActivity extends AppCompatActivity {
 
     public void receiveMessage(String results) {
         try {
-            displayLog(results);
             final JSONObject jsonObject = new JSONObject(results);
             String message = jsonObject.optString("message");
             JSONObject payload = jsonObject.optJSONObject("payload");
@@ -141,7 +142,6 @@ public class OkHeartActivity extends AppCompatActivity {
                     break;
             }
         } catch (JSONException e) {
-            displayLog("Json object error "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
@@ -161,7 +161,6 @@ public class OkHeartActivity extends AppCompatActivity {
                 launchHeart();
             }
         } catch (InterruptedException e) {
-            displayLog("InterruptedException error "+e.toString());
             launchHeart();
         }
     }
@@ -187,9 +186,9 @@ public class OkHeartActivity extends AppCompatActivity {
                                 base.put("name", organisationName);
                             }
                         }
-                        if (url != null) {
-                            if (url.length() > 0) {
-                                base.put("logo", url);
+                        if (logoUrl != null) {
+                            if (logoUrl.length() > 0) {
+                                base.put("logo", logoUrl);
                             }
                         }
                         style.put("base", base);
@@ -226,32 +225,31 @@ public class OkHeartActivity extends AppCompatActivity {
                         payload1.put("context", context);
 
                         JSONObject config = new JSONObject();
+                        JSONObject appBar = new JSONObject();
                         if (enableStreetView != null) {
                             config.put("streetView", enableStreetView);
                         }
-                        JSONObject appBar = new JSONObject();
+                        else {
+                            config.put("streetView", false);
+                        }
+                        if (enableAppBar != null) {
+                            appBar.put("visible", enableAppBar);
+                        }
+                        else {
+                            appBar.put("visible", false);
+                        }
                         if (appBarColor != null) {
                             if (appBarColor.length() > 0) {
                                 appBar.put("color", appBarColor);
-                                appBar.put("visible", true);
-                                config.put("appBar", appBar);
-                            }
-                            else{
-                                appBar.put("visible", false);
-                                config.put("appBar", appBar);
                             }
                         }
-                        else{
-                            appBar.put("visible", false);
-                            config.put("appBar", appBar);
-                        }
+                        config.put("appBar", appBar);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
                         //displayLog( jsonObject.toString().replace("\\", ""));
                         myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" +
                                 jsonObject.toString().replace("\\", "") + ")", null);
                     } catch (Exception e) {
-                        displayLog( "Json object error "+e.toString());
                         runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
                         finish();
                     }
@@ -259,7 +257,6 @@ public class OkHeartActivity extends AppCompatActivity {
             });
         }
         catch (Exception e){
-            displayLog("error running on UI thread "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
@@ -321,7 +318,6 @@ public class OkHeartActivity extends AppCompatActivity {
             finish();
         }
         catch (Exception e){
-            displayLog("Json object error "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
@@ -353,14 +349,13 @@ public class OkHeartActivity extends AppCompatActivity {
             finish();
         }
         catch (Exception e){
-            displayLog("json error exception "+e.toString());
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
     }
 
     private void exitApp(String response){
-        runCallback(new OkHiException( "exit_app", "user exited okcollect"));
+        runCallback(new OkHiException( "exit_app", "exited address creation"));
         finish();
     }
 
@@ -391,14 +386,14 @@ public class OkHeartActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPageFinished(WebView view, String urlString) {
-        }
-
-        @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
             if(error.getErrorCode() != -2) {
                 runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+                finish();
+            }
+            else if(error.getDescription().toString().equalsIgnoreCase("net::ERR_NAME_NOT_RESOLVED")){
+                runCallback(new OkHiException(OkHiException.NETWORK_ERROR_CODE, OkHiException.NETWORK_ERROR_MESSAGE));
                 finish();
             }
         }

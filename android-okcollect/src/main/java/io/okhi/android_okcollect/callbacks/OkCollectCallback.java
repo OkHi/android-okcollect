@@ -2,7 +2,7 @@ package io.okhi.android_okcollect.callbacks;
 
 import io.okhi.android_core.models.OkHiException;
 
-public interface OkCollectCallback<S, T> {
-    void onSuccess(S user, T location);
+public interface OkCollectCallback<OkHiUser, OkHiLocation> {
+    void onSuccess(OkHiUser user, OkHiLocation location);
     void onError(OkHiException e);
 }
