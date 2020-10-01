@@ -72,7 +72,7 @@ public class OkHiTheme {
     }
     /** Is the app bar visible?
      */
-    public Boolean getAppBarVisible() {
+    public Boolean isAppBarVisible() {
         return appBarVisible;
     }
 

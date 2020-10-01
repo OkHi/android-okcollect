@@ -125,7 +125,7 @@ public class OkCollect extends OkHiCore {
             this.primaryColor = okHiTheme.getPrimaryColor();
             this.logoUrl = okHiTheme.getLogoUrl();
             this.appBarColor = okHiTheme.getAppBarColor();
-            this.enableAppBar = okHiTheme.getAppBarVisible();
+            this.enableAppBar = okHiTheme.isAppBarVisible();
             return this;
         }
         /** launch okhi address creation.
