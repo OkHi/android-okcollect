@@ -133,7 +133,7 @@ public class OkCollect extends OkHiCore {
          * @param okHiConfig object to enable streetview.
          */
         public Builder withConfig(@NonNull OkHiConfig okHiConfig){
-            this.enableStreetView = okHiConfig.getEnableStreetView();
+            this.enableStreetView = okHiConfig.isStreetViewEnabled();
             return this;
         }
         /** Create an instance of okcollect

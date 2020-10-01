@@ -28,10 +28,7 @@ public class OkHiConfig {
     }
     /** Is streetview enabled
      */
-    public Boolean getEnableStreetView() {
+    public Boolean isStreetViewEnabled() {
         return enableStreetView;
-    }
-    private void setEnableStreetView(Boolean enableStreetView) {
-        this.enableStreetView = enableStreetView;
     }
 }
