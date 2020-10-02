@@ -41,6 +41,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private static String authorization;
     private static OkHiException okHiException;
     private String params;
+    private String mode;
     OkHi okHi;
 
     @Override
@@ -57,6 +58,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private void processBundle(Bundle bundle){
         try {
             params = bundle.getString("params");
+            mode = bundle.getString("mode");
             processParams(params);
         }
         catch (Exception e){
@@ -377,6 +379,9 @@ public class OkHeartActivity extends AppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             // TODO Auto-generated method stub
             super.onPageStarted(view, url, favicon);
+            if (!mode.equals("dev")) {
+                view.evaluateJavascript("window.console.log = function () {}; window.console.warn = function () {};", null);
+            }
         }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {

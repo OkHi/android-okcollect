@@ -37,9 +37,11 @@ public class OkCollect extends OkHiCore {
     private Boolean enableStreetView;
     private Boolean enableAppBar;
     private static Activity activity;
+    private OkHiAuth auth;
 
     private OkCollect(Builder builder) {
         super(builder.okHiAuth);
+        this.auth = builder.okHiAuth;
         this.activity = builder.activity;
         this.primaryColor = builder.primaryColor;
         this.logoUrl = builder.logoUrl;
@@ -59,6 +61,7 @@ public class OkCollect extends OkHiCore {
         getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
         intent.putExtra("params", getParameters(user));
+        intent.putExtra("mode", auth.getContext().getMode());
         activity.startActivity(intent);
         OkHeartActivity.setOkCollectCallback(okCollectCallback);
     }
