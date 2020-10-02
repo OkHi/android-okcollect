@@ -380,7 +380,7 @@ public class OkHeartActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             super.onPageStarted(view, url, favicon);
             if (!mode.equals("dev")) {
-                view.evaluateJavascript("window.console.log = function () {}; window.console.warn = function () {};", null);
+                view.evaluateJavascript("window.console.log = function () {};", null);
             }
         }
         @Override
