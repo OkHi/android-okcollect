@@ -15,9 +15,11 @@ import io.okhi.android_core.OkHi;
 import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiAppContext;
 import io.okhi.android_core.models.OkHiAuth;
+import io.okhi.android_core.models.OkHiDeveloperType;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
+import io.okhi.android_core.models.OkHiPlatformType;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
@@ -26,13 +28,14 @@ import io.okhi.android_okcollect.utilities.OkHiTheme;
 
 import static com.okhi.okcollect.Secret.DEV_CLIENT_BRANCH;
 import static com.okhi.okcollect.Secret.DEV_CLIENT_KEY;
+import static com.okhi.okcollect.Secret.OKHI_MODE;
 import static com.okhi.okcollect.Secret.PHONE;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final OkHiAppContext okhiAppContext = new OkHiAppContext.Builder("dev")
-            .setDeveloper("OkHi")
-            .setPlatform("Android")
+    private static final OkHiAppContext okhiAppContext = new OkHiAppContext.Builder(OKHI_MODE)
+            .setDeveloper(OkHiDeveloperType.OKHI)
+            .setPlatform(OkHiPlatformType.ANDROID)
             .setAppMeta("OkHi", "1.0.0", 1)
             .build();
 
