@@ -29,7 +29,7 @@ import io.okhi.android_okcollect.utilities.OkHiTheme;
 import static com.okhi.okcollect.Secret.DEV_CLIENT_BRANCH;
 import static com.okhi.okcollect.Secret.DEV_CLIENT_KEY;
 import static com.okhi.okcollect.Secret.OKHI_MODE;
-import static com.okhi.okcollect.Secret.PHONE;
+import static com.okhi.okcollect.Secret.TEST_PHONE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void launchOkCollect(){
         boolean canStartOkCollect = canStartAddressCreation();
         if(canStartOkCollect) {
-            final OkHiUser user = new OkHiUser.Builder(PHONE)
+            final OkHiUser user = new OkHiUser.Builder(TEST_PHONE)
                     .withFirstName("Ramogi")
                     .withLastName("Ochola")
                     .build();
