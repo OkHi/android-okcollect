@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 .withTheme(theme)
                 .withConfig(config)
                 .build();
+        //launchOkCollect();
     }
 
     private void launchOkCollect(){

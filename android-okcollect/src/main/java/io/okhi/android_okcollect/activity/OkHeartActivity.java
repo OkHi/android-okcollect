@@ -114,6 +114,7 @@ public class OkHeartActivity extends AppCompatActivity {
     }
 
     public void receiveMessage(String results) {
+        displayLog(results);
         try {
             final JSONObject jsonObject = new JSONObject(results);
             String message = jsonObject.optString("message");
