@@ -1,6 +1,7 @@
 package io.okhi.android_okcollect.activity;
 
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.GeolocationPermissions;
@@ -391,12 +392,17 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            if(error.getErrorCode() != -2) {
-                runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
-                finish();
-            }
-            else if(error.getDescription().toString().equalsIgnoreCase("net::ERR_NAME_NOT_RESOLVED")){
-                runCallback(new OkHiException(OkHiException.NETWORK_ERROR_CODE, OkHiException.NETWORK_ERROR_MESSAGE));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if(error.getErrorCode() != -2) {
+                    runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
+                    finish();
+                }
+                else if(error.getDescription().toString().equalsIgnoreCase("net::ERR_NAME_NOT_RESOLVED")){
+                    runCallback(new OkHiException(OkHiException.NETWORK_ERROR_CODE, OkHiException.NETWORK_ERROR_MESSAGE));
+                    finish();
+                }
+            } else {
+                runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.toString()));
                 finish();
             }
         }
