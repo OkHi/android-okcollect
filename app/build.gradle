@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "30.0.1"
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.okhi.okcollect"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -30,8 +30,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project(path: ':android-okcollect')
-    implementation 'com.github.okhi:android-core:qa-20-10-SNAPSHOT'
+    //implementation 'com.github.okhi:android-core:47beefb8cb869b7b3ad51339c856d6297c92a5b7'
     //implementation 'com.github.OkHi:android-core:v1.1.2'
     //implementation 'com.github.okhi:android-okcollect:3.0.2'
+    implementation 'com.github.okhi:android-core:v1.1.4'
 
 }
