@@ -86,13 +86,11 @@ public class MainActivity extends AppCompatActivity {
             okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                 @Override
                 public void onSuccess(OkHiUser user, OkHiLocation location) {
-                    displayLog(user.getPhone() + " " + location.getId());
                     showMessage(user.getPhone() + " " + location.getId());
                 }
 
                 @Override
                 public void onError(OkHiException e) {
-                    displayLog(e.getCode() + " " + e.getMessage());
                     showMessage(e.getCode() + " " + e.getMessage());
                 }
             });
