@@ -223,7 +223,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         library.put("version", "version");
 
                         JSONObject platform = new JSONObject();
-                        platform.put("name", "mobile");
+                        platform.put("name", "android");
                         context.put("platform", platform);
                         payload1.put("context", context);
 
