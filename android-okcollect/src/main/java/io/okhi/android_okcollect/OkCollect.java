@@ -1,6 +1,7 @@
 package io.okhi.android_okcollect;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -11,7 +12,6 @@ import org.json.JSONObject;
 import io.okhi.android_core.OkHiCore;
 import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiAppContext;
-import io.okhi.android_core.models.OkHiAuth;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
@@ -37,20 +37,18 @@ public class OkCollect extends OkHiCore {
     private Boolean enableStreetView;
     private Boolean enableAppBar;
     private static Activity activity;
-    private OkHiAuth auth;
 
-    private OkCollect(Builder builder) {
-        super(builder.okHiAuth);
-        this.auth = builder.okHiAuth;
+    private OkCollect(Builder builder) throws OkHiException {
+        super(builder.activity);
         this.activity = builder.activity;
         this.primaryColor = builder.primaryColor;
         this.logoUrl = builder.logoUrl;
         this.appBarColor = builder.appBarColor;
         this.enableStreetView = builder.enableStreetView;
         this.enableAppBar = builder.enableAppBar;
-        this.environment = builder.okHiAuth.getContext().getMode();
-        this.organisationName = builder.okHiAuth.getContext().getAppMeta().getName();
-        this.developer = builder.okHiAuth.getContext().getDeveloper();
+        this.environment = auth.getContext().getMode();
+        this.organisationName = auth.getContext().getAppMeta().getName();
+        this.developer = auth.getContext().getDeveloper();
     }
     /** launch okhi address creation.
      * @param okCollectCallback the callback param to communicate with the parent class.
@@ -105,7 +103,6 @@ public class OkCollect extends OkHiCore {
     /** OkCollect builder class.
      */
     public static class Builder {
-        private OkHiAuth okHiAuth;
         private String primaryColor;
         private String logoUrl;
         private String appBarColor;
@@ -113,11 +110,10 @@ public class OkCollect extends OkHiCore {
         private Boolean enableAppBar;
         private Activity activity;
         /** OkCollect builder.
-         * @param okHiAuth the auth object to enable authentication.
          * @param activity the context to run okhi webview.
+         *
          */
-        public Builder(@NonNull OkHiAuth okHiAuth, @NonNull Activity activity) {
-            this.okHiAuth = okHiAuth;
+        public Builder(@NonNull Activity activity) {
             this.activity = activity;
         }
         /** Configure the look and feel of the webview.
@@ -141,7 +137,7 @@ public class OkCollect extends OkHiCore {
         }
         /** Create an instance of okcollect
          */
-        public OkCollect build() {
+        public OkCollect build() throws OkHiException {
             return new OkCollect(this);
         }
     }
