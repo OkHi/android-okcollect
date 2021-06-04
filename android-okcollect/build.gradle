@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 23
-        versionName "3.1.1"
+        versionName "3.2.0"
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -29,6 +29,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "androidx.annotation:annotation:1.1.0"
-    implementation 'com.github.okhi:android-core:53643b29603206de0d5f7cddabbd723de348716a'
+    implementation 'com.github.okhi:android-core:v1.2.0-beta'
 
 }

@@ -27,6 +27,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':android-okcollect')
-    implementation 'com.github.okhi:android-core:53643b29603206de0d5f7cddabbd723de348716a'
+    implementation 'com.github.okhi:android-core:v1.2.0-beta'
 
 }
