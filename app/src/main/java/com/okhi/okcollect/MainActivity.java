@@ -35,10 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private OkHiConfig config = new OkHiConfig.Builder()
         .withStreetView()
         .build();
-    private OkHiUser user = new OkHiUser.Builder(TEST_PHONE)
-        .withFirstName("Julius")
-        .withLastName("Kiano")
-        .build();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     private void launchOkCollect(){
         boolean canStartOkCollect = canStartAddressCreation();
         if(canStartOkCollect) {
+            OkHiUser user = new OkHiUser.Builder(TEST_PHONE)
+                .withFirstName("Julius")
+                .withLastName("Kiano")
+                .build();
             okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                 @Override
                 public void onSuccess(OkHiUser user, OkHiLocation location) {
@@ -121,9 +121,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleButtonTap(View view) {
         launchOkCollect();
-    }
-
-    private void displayLog(String log){
-        Log.i("MainActivity", log);
     }
 }
