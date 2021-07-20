@@ -295,6 +295,9 @@ public class OkHeartActivity extends AppCompatActivity {
             String subtitle = locationObject.optString("subtitle",null);
             String plusCode = locationObject.optString("plus_code",null);
             String displayTitle = locationObject.optString("display_title",null);
+            String country = locationObject.optString("country",null);
+            String city = locationObject.optString("city",null);
+            String state = locationObject.optString("state",null);
             JSONObject streetViewObject = locationObject.optJSONObject("street_view");
             String streetViewUrl = null;
             String streetViewPanoId = null;
@@ -316,6 +319,10 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setPhoto(photo)
                     .setUrl(url)
                     .setPropertyNumber(propertyNumber)
+                    .setDisplayTitle(displayTitle)
+                    .setCountry(country)
+                    .setCity(city)
+                    .setState(state)
                     .build();
             runCallback(user,location);
             finish();
