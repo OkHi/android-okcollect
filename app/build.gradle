@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "3.2.1"
+        versionName "3.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -27,5 +27,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':android-okcollect')
-    implementation 'com.github.okhi:android-core:b33157e4378fdb4fc7d591d0741f89b6269b91cf'
+    implementation 'com.github.okhi:android-core:v1.3.1'
 }
