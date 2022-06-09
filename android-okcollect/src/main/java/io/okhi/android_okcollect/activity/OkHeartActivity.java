@@ -37,7 +37,7 @@ import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL;
 
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
-    private Boolean enableStreetView, enableAppBar;
+    private Boolean enableStreetView, enableAppBar, homeAddressTypeEnabled, workAddressTypeEnabled;
     private String phone, firstName, lastName,environment,developerName,
             authorizationToken,primaryColor,logoUrl,appBarColor, organisationName;
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
@@ -84,6 +84,8 @@ public class OkHeartActivity extends AppCompatActivity {
             enableAppBar = paramsObject.optBoolean("enableAppBar");
             developerName = paramsObject.optString("developerName");
             organisationName = paramsObject.optString("organisationName");
+            homeAddressTypeEnabled = paramsObject.optBoolean("homeAddressTypeEnabled", true);
+            workAddressTypeEnabled = paramsObject.optBoolean("workAddressTypeEnabled", true);
         } catch (Exception e){
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
@@ -229,12 +231,14 @@ public class OkHeartActivity extends AppCompatActivity {
 
                         JSONObject config = new JSONObject();
                         JSONObject appBar = new JSONObject();
+                        JSONObject addressTypes = new JSONObject();
                         if (enableStreetView != null) {
                             config.put("streetView", enableStreetView);
                         }
                         else {
                             config.put("streetView", false);
                         }
+
                         if (enableAppBar != null) {
                             appBar.put("visible", enableAppBar);
                         }
@@ -246,6 +250,10 @@ public class OkHeartActivity extends AppCompatActivity {
                                 appBar.put("color", appBarColor);
                             }
                         }
+                        addressTypes.put("work", workAddressTypeEnabled != null ? workAddressTypeEnabled : true);
+                        addressTypes.put("home", homeAddressTypeEnabled != null ? homeAddressTypeEnabled : true);
+
+                        config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);

@@ -35,6 +35,8 @@ public class OkCollect extends OkHiCore {
     private String organisationName;
     private String developer;
     private Boolean enableStreetView;
+    private Boolean workAddressTypeEnabled;
+    private Boolean homeAddressTypeEnabled;
     private Boolean enableAppBar;
     private static Activity activity;
 
@@ -49,6 +51,8 @@ public class OkCollect extends OkHiCore {
         this.environment = auth.getContext().getMode();
         this.organisationName = auth.getContext().getAppMeta().getName();
         this.developer = auth.getContext().getDeveloper();
+        this.workAddressTypeEnabled = builder.workAddressTypeEnabled;
+        this.homeAddressTypeEnabled = builder.homeAddressTypeEnabled;
     }
     /** launch okhi address creation.
      * @param okCollectCallback the callback param to communicate with the parent class.
@@ -78,7 +82,8 @@ public class OkCollect extends OkHiCore {
             jsonObject.put("enableStreetView", enableStreetView);
             jsonObject.put("enableAppBar", enableAppBar);
             jsonObject.put("developerName", developer);
-            jsonObject.put("organisationName", organisationName);
+            jsonObject.put("workAddressTypeEnabled", workAddressTypeEnabled);
+            jsonObject.put("homeAddressTypeEnabled", homeAddressTypeEnabled);
             params = jsonObject.toString();
         }
         catch (Exception e){
@@ -109,6 +114,8 @@ public class OkCollect extends OkHiCore {
         private Boolean enableStreetView;
         private Boolean enableAppBar;
         private Activity activity;
+        private Boolean workAddressTypeEnabled;
+        private Boolean homeAddressTypeEnabled;
         /** OkCollect builder.
          * @param activity the context to run okhi webview.
          *
@@ -133,6 +140,8 @@ public class OkCollect extends OkHiCore {
          */
         public Builder withConfig(@NonNull OkHiConfig okHiConfig){
             this.enableStreetView = okHiConfig.isStreetViewEnabled();
+            this.homeAddressTypeEnabled = okHiConfig.isHomeAddressTypeEnabled();
+            this.workAddressTypeEnabled = okHiConfig.isWorkAddressTypeEnabled();
             return this;
         }
         /** Create an instance of okcollect
