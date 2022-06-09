@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         .build();
     private OkHiConfig config = new OkHiConfig.Builder()
         .withStreetView()
+        .withWorkAddressType(false)
+        .withHomeAddressType(true)
         .build();
 
     @Override
