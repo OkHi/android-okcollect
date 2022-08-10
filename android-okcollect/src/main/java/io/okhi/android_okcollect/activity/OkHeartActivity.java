@@ -23,6 +23,7 @@ import io.okhi.android_core.OkHi;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
+import io.okhi.android_core.models.OkHiPermissionService;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.BuildConfig;
 import io.okhi.android_okcollect.OkCollect;
@@ -136,6 +137,9 @@ public class OkHeartActivity extends AppCompatActivity {
                 case "location_selected":
                     processResponse(results);
                     break;
+                case "request_enable_protected_apps":
+                    processEnableProtectedApps();
+                    break;
                 case "fatal_exit":
                     processError(results);
                     break;
@@ -149,6 +153,14 @@ public class OkHeartActivity extends AppCompatActivity {
         } catch (JSONException e) {
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
+        }
+    }
+
+    private void processEnableProtectedApps() {
+        try {
+            OkHiPermissionService.openProtectedAppsSettings(this, 8678);
+        } catch (OkHiException e) {
+            e.printStackTrace();
         }
     }
 
@@ -229,6 +241,19 @@ public class OkHeartActivity extends AppCompatActivity {
                         context.put("platform", platform);
                         payload1.put("context", context);
 
+                        JSONObject permissions = new JSONObject();
+                        Boolean hasBackgroundLocationPermission = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext());
+                        Boolean hasLocationPermission = OkHi.isLocationPermissionGranted(getApplicationContext());
+                        Boolean canOpenProtectedApps = OkHiPermissionService.canOpenProtectedApps();
+                        permissions.put("location", hasBackgroundLocationPermission ? "always" : hasLocationPermission ? "whenInUse" : "denied");
+                        permissions.put("protectedApp", canOpenProtectedApps ? "denied" : "granted");
+                        context.put("permissions", permissions);
+
+                        JSONObject device = new JSONObject();
+                        device.put("manufacturer", Build.MANUFACTURER);
+                        device.put("model", Build.MODEL);
+                        context.put("device", device);
+
                         JSONObject config = new JSONObject();
                         JSONObject appBar = new JSONObject();
                         JSONObject addressTypes = new JSONObject();
@@ -306,6 +331,8 @@ public class OkHeartActivity extends AppCompatActivity {
             String country = locationObject.optString("country",null);
             String city = locationObject.optString("city",null);
             String state = locationObject.optString("state",null);
+            String countryCode = locationObject.optString("country_code",null);
+            String neighborhood = locationObject.optString("neighborhood",null);
             JSONObject streetViewObject = locationObject.optJSONObject("street_view");
             String streetViewUrl = null;
             String streetViewPanoId = null;
@@ -331,6 +358,8 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setCountry(country)
                     .setCity(city)
                     .setState(state)
+                    .setCountryCode(countryCode)
+                    .setNeighborhood(neighborhood)
                     .build();
             runCallback(user,location);
             finish();
