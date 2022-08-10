@@ -331,6 +331,8 @@ public class OkHeartActivity extends AppCompatActivity {
             String country = locationObject.optString("country",null);
             String city = locationObject.optString("city",null);
             String state = locationObject.optString("state",null);
+            String countryCode = locationObject.optString("country_code",null);
+            String neighborhood = locationObject.optString("neighborhood",null);
             JSONObject streetViewObject = locationObject.optJSONObject("street_view");
             String streetViewUrl = null;
             String streetViewPanoId = null;
@@ -356,6 +358,8 @@ public class OkHeartActivity extends AppCompatActivity {
                     .setCountry(country)
                     .setCity(city)
                     .setState(state)
+                    .setCountryCode(countryCode)
+                    .setNeighborhood(neighborhood)
                     .build();
             runCallback(user,location);
             finish();
