@@ -1,5 +1,6 @@
 package io.okhi.android_okcollect.activity;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -247,6 +248,10 @@ public class OkHeartActivity extends AppCompatActivity {
                         Boolean canOpenProtectedApps = OkHiPermissionService.canOpenProtectedApps();
                         permissions.put("location", hasBackgroundLocationPermission ? "always" : hasLocationPermission ? "whenInUse" : "denied");
                         permissions.put("protectedApp", canOpenProtectedApps ? "denied" : "granted");
+
+                        Boolean hasPhoneMasterInstalled = OkHi.isPackageInstalled("com.transsion.phonemaster", getApplicationContext());
+                        permissions.put("phoneMasterInstalled", hasPhoneMasterInstalled);
+
                         context.put("permissions", permissions);
 
                         JSONObject device = new JSONObject();
