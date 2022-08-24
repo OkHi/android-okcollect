@@ -245,7 +245,6 @@ public class OkHeartActivity extends AppCompatActivity {
                         JSONObject permissions = new JSONObject();
                         Boolean hasBackgroundLocationPermission = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext());
                         Boolean hasLocationPermission = OkHi.isLocationPermissionGranted(getApplicationContext());
-                        Boolean canOpenProtectedApps = OkHiPermissionService.canOpenProtectedApps();
                         permissions.put("location", hasBackgroundLocationPermission ? "always" : hasLocationPermission ? "whenInUse" : "denied");
 
                         context.put("permissions", permissions);
@@ -279,7 +278,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         addressTypes.put("work", workAddressTypeEnabled != null ? workAddressTypeEnabled : true);
                         addressTypes.put("home", homeAddressTypeEnabled != null ? homeAddressTypeEnabled : true);
 
-                        config.put("protectedApps", OkHi.isPackageInstalled("com.transsion.phonemaster", getApplicationContext()));
+                        config.put("protectedApps", OkHi.isPackageInstalled("com.transsion.phonemaster", getApplicationContext()) && OkHiPermissionService.canOpenProtectedApps());
                         config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
                         payload1.put("config", config);
