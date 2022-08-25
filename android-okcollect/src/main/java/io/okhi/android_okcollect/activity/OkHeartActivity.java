@@ -1,5 +1,6 @@
 package io.okhi.android_okcollect.activity;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -47,11 +48,13 @@ public class OkHeartActivity extends AppCompatActivity {
     private String params;
     private String mode;
     OkHi okHi;
+    private static Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_okheart);
+        appContext = this;
         myWebView = findViewById(R.id.webview);
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
@@ -244,9 +247,8 @@ public class OkHeartActivity extends AppCompatActivity {
                         JSONObject permissions = new JSONObject();
                         Boolean hasBackgroundLocationPermission = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext());
                         Boolean hasLocationPermission = OkHi.isLocationPermissionGranted(getApplicationContext());
-                        Boolean canOpenProtectedApps = OkHiPermissionService.canOpenProtectedApps();
                         permissions.put("location", hasBackgroundLocationPermission ? "always" : hasLocationPermission ? "whenInUse" : "denied");
-                        permissions.put("protectedApp", canOpenProtectedApps ? "denied" : "granted");
+
                         context.put("permissions", permissions);
 
                         JSONObject device = new JSONObject();
@@ -278,6 +280,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         addressTypes.put("work", workAddressTypeEnabled != null ? workAddressTypeEnabled : true);
                         addressTypes.put("home", homeAddressTypeEnabled != null ? homeAddressTypeEnabled : true);
 
+                        config.put("protectedApps", OkHiPermissionService.canOpenProtectedApps(appContext));
                         config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
                         payload1.put("config", config);
