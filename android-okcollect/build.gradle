@@ -34,5 +34,5 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.annotation:annotation:1.4.0"
-    implementation 'com.github.okhi:android-core:1.4.3'
+    implementation 'com.github.okhi:android-core:1.4.4'
 }
