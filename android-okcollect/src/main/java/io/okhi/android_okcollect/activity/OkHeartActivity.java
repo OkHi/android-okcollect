@@ -26,6 +26,7 @@ import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiPermissionService;
 import io.okhi.android_core.models.OkHiUser;
+import io.okhi.android_core.models.OkPreference;
 import io.okhi.android_okcollect.BuildConfig;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
@@ -285,9 +286,9 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("appBar", appBar);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
-                        //displayLog( jsonObject.toString().replace("\\", ""));
-                        myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" +
-                                jsonObject.toString().replace("\\", "") + ")", null);
+                        String payload = jsonObject.toString().replace("\\", "");
+                        OkPreference.setItem("okcollect-launch-payload", payload, appContext);
+                        myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" + payload + ")", null);
                     } catch (Exception e) {
                         runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
                         finish();
