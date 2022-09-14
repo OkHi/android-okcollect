@@ -50,6 +50,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private String mode;
     OkHi okHi;
     private static Context appContext;
+    private String webViewUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,14 +108,15 @@ public class OkHeartActivity extends AppCompatActivity {
         myWebView.setWebContentsDebuggingEnabled(false);
         myWebView.addJavascriptInterface(new WebAppInterface(OkHeartActivity.this), "Android");
         if(environment.equalsIgnoreCase(OkHiMode.PROD)){
-            myWebView.loadUrl(PROD_HEART_URL);
+            webViewUrl = PROD_HEART_URL;
         }
         else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
-            myWebView.loadUrl(SANDBOX_HEART_URL);
+            webViewUrl = SANDBOX_HEART_URL;
         }
         else{
-            myWebView.loadUrl(DEV_HEART_URL);
+            webViewUrl = DEV_HEART_URL;
         }
+        myWebView.loadUrl(webViewUrl);
         myWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
@@ -286,6 +288,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("appBar", appBar);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
+                        jsonObject.put("url", webViewUrl);
                         String payload = jsonObject.toString().replace("\\", "");
                         OkPreference.setItem("okcollect-launch-payload", payload, appContext);
                         myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" + payload + ")", null);
