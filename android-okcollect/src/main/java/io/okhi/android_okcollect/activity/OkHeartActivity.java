@@ -488,4 +488,16 @@ public class OkHeartActivity extends AppCompatActivity {
     private void displayLog(String log){
         Log.i("OkHeartActivity", log);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(myWebView.canGoBack()){
+            myWebView.goBack();
+
+        }else{
+            finish();
+        }
+
+    }
 }
