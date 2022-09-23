@@ -502,7 +502,6 @@ public class OkHeartActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if(myWebView.canGoBack()){
             myWebView.goBack();
         } else{
