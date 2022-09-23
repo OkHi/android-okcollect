@@ -70,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onError(OkHiException e) {
                     showMessage(e.getCode() + " " + e.getMessage());
                 }
+                @Override
+                public void onClose() {
+                    showMessage("user closed");
+                }
             });
         }
     }

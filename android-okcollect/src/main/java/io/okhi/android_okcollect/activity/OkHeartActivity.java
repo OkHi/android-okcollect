@@ -387,6 +387,24 @@ public class OkHeartActivity extends AppCompatActivity {
         finish();
     }
 
+    private void runCallback(final OkHiException exception) {
+        OkCollect.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                okCollectCallback.onError(exception);
+            }
+        });
+        finish();
+    }
+
+    private void runOnCloseCallback() {
+        OkCollect.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                okCollectCallback.onClose();
+            }
+        });
+        finish();
+    }
+
     private void processError(String response){
         try {
             final JSONObject jsonObject = new JSONObject(response);
@@ -409,17 +427,7 @@ public class OkHeartActivity extends AppCompatActivity {
     }
 
     private void exitApp(String response){
-        runCallback(new OkHiException( "exit_app", "exited address creation"));
-        finish();
-    }
-
-    private void runCallback(final OkHiException exception) {
-        OkCollect.getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                okCollectCallback.onError(exception);
-            }
-        });
-        finish();
+        runOnCloseCallback();
     }
 
     @Override
@@ -445,6 +453,9 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
+            if (error.getErrorCode() == -1) {
+                return;
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(error.getErrorCode() != -2) {
                     runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
@@ -487,5 +498,15 @@ public class OkHeartActivity extends AppCompatActivity {
 
     private void displayLog(String log){
         Log.i("OkHeartActivity", log);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(myWebView.canGoBack()){
+            myWebView.goBack();
+        } else{
+            runOnCloseCallback();
+        }
     }
 }
