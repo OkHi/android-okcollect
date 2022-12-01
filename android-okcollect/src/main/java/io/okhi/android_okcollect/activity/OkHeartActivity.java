@@ -42,7 +42,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
     private Boolean enableStreetView, enableAppBar, homeAddressTypeEnabled, workAddressTypeEnabled;
     private String phone, firstName, lastName,environment,developerName,
-            authorizationToken,primaryColor,logoUrl,appBarColor, organisationName;
+            authorizationToken,primaryColor,logoUrl,appBarColor, organisationName, email;
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
     private static String authorization;
     private static OkHiException okHiException;
@@ -82,6 +82,7 @@ public class OkHeartActivity extends AppCompatActivity {
             phone = paramsObject.optString("phone");
             firstName = paramsObject.optString("firstName");
             lastName = paramsObject.optString("lastName");
+            email = paramsObject.optString("email");
             environment = paramsObject.optString("environment");
             primaryColor = paramsObject.optString("primaryColor");
             logoUrl = paramsObject.optString("logoUrl");
@@ -221,6 +222,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         user.put("firstName", firstName);
                         user.put("lastName", lastName);
                         user.put("phone", phone);
+                        user.put("email", email);
                         payload1.put("user", user);
 
                         JSONObject auth = new JSONObject();
@@ -453,8 +455,10 @@ public class OkHeartActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            if (error.getErrorCode() == -1) {
-                return;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (error.getErrorCode() == -1) {
+                    return;
+                }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(error.getErrorCode() != -2) {
