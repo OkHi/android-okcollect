@@ -75,6 +75,7 @@ public class OkCollect extends OkHiCore {
             jsonObject.put("phone", user.getPhone());
             jsonObject.put("firstName", user.getFirstName());
             jsonObject.put("lastName", user.getLastName());
+            jsonObject.put("email", user.getEmail());
             jsonObject.put("environment", environment);
             jsonObject.put("primaryColor", primaryColor);
             jsonObject.put("logoUrl", logoUrl);
