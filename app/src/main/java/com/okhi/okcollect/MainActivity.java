@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             OkHiUser user = new OkHiUser.Builder(TEST_PHONE)
                 .withFirstName("Julius")
                 .withLastName("Kiano")
+                .withEmail("kiano@okhi.co")
                 .build();
             okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                 @Override
