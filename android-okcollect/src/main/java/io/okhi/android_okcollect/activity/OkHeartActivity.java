@@ -317,6 +317,7 @@ public class OkHeartActivity extends AppCompatActivity {
                     .withFirstName(userObject.optString("first_name",null))
                     .withLastName(userObject.optString("last_name",null))
                     .withOkHiUserId(userObject.optString("id",null))
+                    .withEmail(userObject.optString("email", null))
                     .build();
             String ualId = locationObject.optString("id", null);
             JSONObject geoPointObject = locationObject.optJSONObject("geo_point");
