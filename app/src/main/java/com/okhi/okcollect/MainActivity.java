@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import io.okhi.android_core.OkHi;
@@ -27,7 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     private OkCollect okCollect;
     private OkHi okhi;
-    private Button launchBtn;
+    private EditText emailTextField;
+    private EditText firstNameTextField;
+    private EditText lastNameTextField;
+    private EditText phoneNumberTextField;
+    private OkHiUser user;
+
     private OkHiTheme theme = new OkHiTheme.Builder("#00fdaa")
         .setAppBarLogo("https://cdn.okhi.co/icon.png")
         .setAppBarColor("#ba0c2f")
@@ -42,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        launchBtn = findViewById(R.id.launchBtn);
+        emailTextField = findViewById(R.id.emailTextField);
+        firstNameTextField = findViewById(R.id.firstNameTextField);
+        lastNameTextField = findViewById(R.id.lastNameTextField);
+        phoneNumberTextField = findViewById(R.id.phoneNumberTextField);
+
         try {
             okhi = new OkHi(this);
             okCollect = new OkCollect.Builder(this)
@@ -56,16 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchOkCollect(){
         boolean canStartOkCollect = canStartAddressCreation();
-        if(canStartOkCollect) {
-            OkHiUser user = new OkHiUser.Builder(TEST_PHONE)
-                .withFirstName("Julius")
-                .withLastName("Kiano")
-                .withEmail("kiano@okhi.co")
-                .build();
+        if(user!= null && canStartOkCollect) {
             okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                 @Override
                 public void onSuccess(OkHiUser user, OkHiLocation location) {
-                    showMessage(user.getPhone() + " " + location.getId());
+                    showMessage(user.getPhone() + ":" + user.getEmail() + " " + location.getId());
                 }
                 @Override
                 public void onError(OkHiException e) {
@@ -126,7 +131,19 @@ public class MainActivity extends AppCompatActivity {
         okhi.onActivityResult(requestCode, resultCode, data);
     }
 
+    private String getText(EditText editText) {
+        return editText.getText().toString().trim();
+    }
     public void handleButtonTap(View view) {
-        launchOkCollect();
+        String email = getText(emailTextField);
+        String phoneNumber = getText(phoneNumberTextField);
+        String firstName = getText(firstNameTextField);
+        String lastName = getText(lastNameTextField);
+        if (email.length() > 0 && phoneNumber.length() > 0 && firstName.length() > 0 && lastName.length() > 0) {
+            user = new OkHiUser.Builder(phoneNumber).withEmail(email).withFirstName(firstName).withLastName(lastName).build();
+            launchOkCollect();
+        } else {
+            showMessage("Fill out all required fields");
+        }
     }
 }

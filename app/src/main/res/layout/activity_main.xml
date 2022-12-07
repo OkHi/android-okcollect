@@ -6,20 +6,75 @@
     android:layout_height="match_parent"
     tools:context="com.okhi.okcollect.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/okcollectfragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
     <Button
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/launchBtn"
-        android:onClick="handleButtonTap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Launch" />
+      android:id="@+id/button"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="30dp"
+      android:layout_marginEnd="30dp"
+      android:onClick="handleButtonTap"
+      android:text="Create an address"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+      android:id="@+id/phoneNumberTextField"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="30dp"
+      android:layout_marginEnd="30dp"
+      android:layout_marginBottom="16dp"
+      android:ems="10"
+      android:hint="+254700110590"
+      android:inputType="phone"
+      app:layout_constraintBottom_toTopOf="@+id/button"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.497"
+      app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+      android:id="@+id/lastNameTextField"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="30dp"
+      android:layout_marginEnd="30dp"
+      android:layout_marginBottom="16dp"
+      android:ems="10"
+      android:hint="Last Name*"
+      android:inputType="textPersonName"
+      app:layout_constraintBottom_toTopOf="@+id/phoneNumberTextField"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.497"
+      app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+      android:id="@+id/firstNameTextField"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="30dp"
+      android:layout_marginEnd="30dp"
+      android:layout_marginBottom="16dp"
+      android:ems="10"
+      android:hint="First Name*"
+      android:inputType="textPersonName"
+      app:layout_constraintBottom_toTopOf="@+id/lastNameTextField"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.497"
+      app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+      android:id="@+id/emailTextField"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="30dp"
+      android:layout_marginEnd="30dp"
+      android:layout_marginBottom="16dp"
+      android:ems="10"
+      android:hint="Email*"
+      android:inputType="textEmailAddress"
+      app:layout_constraintBottom_toTopOf="@+id/firstNameTextField"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
