@@ -21,7 +21,7 @@ import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
 
-import static com.okhi.okcollect.Secret.TEST_PHONE;
+// import static com.okhi.okcollect.Secret.TEST_PHONE;
 
 public class MainActivity extends AppCompatActivity {
 
