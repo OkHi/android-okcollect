@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-// apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.android-okcollect'
 
 android {
@@ -30,7 +29,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.annotation:annotation:1.5.0"
