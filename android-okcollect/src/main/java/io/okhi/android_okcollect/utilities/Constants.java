@@ -14,5 +14,5 @@ public class Constants {
 
     //Dev
     public static final String DEV_HEART_URL_POST_21 = "https://dev-manager-v5.okhi.io";
-    public static final String DEV_HEART_URL_PRE_21 = "https://dev-manager-v5.okhi.io";
+    public static final String DEV_HEART_URL_PRE_21 = "https://google.com";
 }
