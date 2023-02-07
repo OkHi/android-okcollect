@@ -33,12 +33,12 @@ import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.interfaces.WebAppInterface;
 
-import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_POST_21;
-import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_PRE_21;
-import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_POST_21;
-import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_PRE_21;
-import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_POST_21;
-import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_PRE_21;
+import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_POST_22;
+import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_PRE_22;
+import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_POST_22;
+import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_PRE_22;
+import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_POST_22;
+import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_PRE_22;
 
 
 public class OkHeartActivity extends AppCompatActivity {
@@ -124,24 +124,24 @@ public class OkHeartActivity extends AppCompatActivity {
     private String getWebUrl(){
         String webViewUrl;
         if(environment.equalsIgnoreCase(OkHiMode.PROD)){
-            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
-                webViewUrl = PROD_HEART_URL_PRE_21;
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
+                webViewUrl = PROD_HEART_URL_PRE_22;
             } else {
-                webViewUrl = PROD_HEART_URL_POST_21;
+                webViewUrl = PROD_HEART_URL_POST_22;
             };
         }
         else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
-            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
-                webViewUrl = SANDBOX_HEART_URL_PRE_21;
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
+                webViewUrl = SANDBOX_HEART_URL_PRE_22;
             } else {
-                webViewUrl = SANDBOX_HEART_URL_POST_21;
+                webViewUrl = SANDBOX_HEART_URL_POST_22;
             };
         }
         else{
-            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
-                webViewUrl = DEV_HEART_URL_PRE_21;
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
+                webViewUrl = DEV_HEART_URL_PRE_22;
             } else {
-                webViewUrl = DEV_HEART_URL_POST_21;
+                webViewUrl = DEV_HEART_URL_POST_22;
             };
         }
 
