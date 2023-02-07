@@ -1,5 +1,6 @@
 package io.okhi.android_okcollect.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,15 +28,17 @@ import io.okhi.android_core.models.OkHiMode;
 import io.okhi.android_core.models.OkHiPermissionService;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_core.models.OkPreference;
-import io.okhi.android_okcollect.BuildConfig;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.interfaces.WebAppInterface;
 
-import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL;
-import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL;
-import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL;
+import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_POST_21;
+import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_PRE_21;
+import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_POST_21;
+import static io.okhi.android_okcollect.utilities.Constants.PROD_HEART_URL_PRE_21;
+import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_POST_21;
+import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_PRE_21;
 
 
 public class OkHeartActivity extends AppCompatActivity {
@@ -99,6 +102,7 @@ public class OkHeartActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView(){
         myWebView.setWebViewClient(new MyWebViewClient());
         WebSettings webSettings = myWebView.getSettings();
@@ -108,16 +112,7 @@ public class OkHeartActivity extends AppCompatActivity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         myWebView.setWebContentsDebuggingEnabled(false);
         myWebView.addJavascriptInterface(new WebAppInterface(OkHeartActivity.this), "Android");
-        if(environment.equalsIgnoreCase(OkHiMode.PROD)){
-            webViewUrl = PROD_HEART_URL;
-        }
-        else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
-            webViewUrl = SANDBOX_HEART_URL;
-        }
-        else{
-            webViewUrl = DEV_HEART_URL;
-        }
-        myWebView.loadUrl(webViewUrl);
+        myWebView.loadUrl(getWebUrl());
         myWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
@@ -125,6 +120,33 @@ public class OkHeartActivity extends AppCompatActivity {
             }
         });
     }
+
+    private String getWebUrl(){
+        String webViewUrl;
+        if(environment.equalsIgnoreCase(OkHiMode.PROD)){
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
+                webViewUrl = PROD_HEART_URL_PRE_21;
+            } else {
+                webViewUrl = PROD_HEART_URL_POST_21;
+            };
+        }
+        else if(environment.equalsIgnoreCase(OkHiMode.SANDBOX)){
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
+                webViewUrl = SANDBOX_HEART_URL_PRE_21;
+            } else {
+                webViewUrl = SANDBOX_HEART_URL_POST_21;
+            };
+        }
+        else{
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
+                webViewUrl = DEV_HEART_URL_PRE_21;
+            } else {
+                webViewUrl = DEV_HEART_URL_POST_21;
+            };
+        }
+
+        return webViewUrl;
+    };
 
     public void receiveMessage(String results) {
         try {
