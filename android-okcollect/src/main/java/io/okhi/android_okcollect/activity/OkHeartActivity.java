@@ -144,7 +144,7 @@ public class OkHeartActivity extends AppCompatActivity {
                 webViewUrl = DEV_HEART_URL_POST_22;
             };
         }
-
+        
         return webViewUrl;
     };
 
@@ -312,7 +312,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("appBar", appBar);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
-                        jsonObject.put("url", webViewUrl);
+                        jsonObject.put("url", getWebUrl());
                         String payload = jsonObject.toString().replace("\\", "");
                         OkPreference.setItem("okcollect-launch-payload", payload, appContext);
                         myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" + payload + ")", null);
