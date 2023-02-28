@@ -51,7 +51,7 @@ public class OkHeartActivity extends AppCompatActivity {
     private static OkHiException okHiException;
     private String params;
     private String mode;
-    OkHi okHi;
+
     private static Context appContext;
     private String webViewUrl;
 
@@ -64,7 +64,6 @@ public class OkHeartActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         processBundle(bundle);
         setupWebView();
-        okHi = new OkHi(this);
     }
 
     private void processBundle(Bundle bundle){
