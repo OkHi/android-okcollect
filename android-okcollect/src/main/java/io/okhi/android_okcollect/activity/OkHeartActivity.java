@@ -32,6 +32,7 @@ import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.interfaces.WebAppInterface;
+import io.okhi.android_okcollect.models.OkCollectLaunchMode;
 
 import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_POST_22;
 import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_PRE_22;
@@ -52,6 +53,8 @@ public class OkHeartActivity extends AppCompatActivity {
     private String params;
     private String mode;
 
+    private String launchMode = OkCollectLaunchMode.SELECT.name();
+
     private static Context appContext;
     private String webViewUrl;
 
@@ -70,6 +73,7 @@ public class OkHeartActivity extends AppCompatActivity {
         try {
             params = bundle.getString("params");
             mode = bundle.getString("mode");
+            launchMode = bundle.getString("launchMode", OkCollectLaunchMode.SELECT.name());
             processParams(params);
         }
         catch (Exception e){
@@ -217,7 +221,7 @@ public class OkHeartActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("message", "select_location");
+                        jsonObject.put("message", launchMode.equals(OkCollectLaunchMode.CREATE.name()) ? "start_app" : "select_location");
                         JSONObject payload1 = new JSONObject();
                         JSONObject style = new JSONObject();
                         JSONObject base = new JSONObject();
