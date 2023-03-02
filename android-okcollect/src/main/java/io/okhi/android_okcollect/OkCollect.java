@@ -17,6 +17,7 @@ import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.activity.OkHeartActivity;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
+import io.okhi.android_okcollect.models.OkCollectLaunchMode;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
 
@@ -64,6 +65,17 @@ public class OkCollect extends OkHiCore {
         Intent intent = new Intent(activity, OkHeartActivity.class);
         intent.putExtra("params", getParameters(user));
         intent.putExtra("mode", auth.getContext().getMode());
+        intent.putExtra("launchMode", OkCollectLaunchMode.SELECT.name());
+        activity.startActivity(intent);
+        OkHeartActivity.setOkCollectCallback(okCollectCallback);
+    }
+
+    public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectLaunchMode launchMode, @NonNull final OkCollectCallback <OkHiUser, OkHiLocation> okCollectCallback){
+        getAuth(user);
+        Intent intent = new Intent(activity, OkHeartActivity.class);
+        intent.putExtra("params", getParameters(user));
+        intent.putExtra("mode", auth.getContext().getMode());
+        intent.putExtra("launchMode", launchMode.name());
         activity.startActivity(intent);
         OkHeartActivity.setOkCollectCallback(okCollectCallback);
     }
