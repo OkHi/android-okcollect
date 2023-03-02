@@ -19,6 +19,7 @@ import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiUser;
 import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
+import io.okhi.android_okcollect.models.OkCollectLaunchMode;
 import io.okhi.android_okcollect.utilities.OkHiConfig;
 import io.okhi.android_okcollect.utilities.OkHiTheme;
 
@@ -67,18 +68,18 @@ public class MainActivity extends AppCompatActivity {
     private void launchOkCollect(){
         boolean canStartOkCollect = canStartAddressCreation();
         if(user!= null && canStartOkCollect) {
-            okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
+            okCollect.launch(user, OkCollectLaunchMode.CREATE, new OkCollectCallback<OkHiUser, OkHiLocation>() {
                 @Override
                 public void onSuccess(OkHiUser user, OkHiLocation location) {
-                    showMessage(user.getPhone() + ":" + user.getEmail() + " " + location.getId());
+
                 }
                 @Override
                 public void onError(OkHiException e) {
-                    showMessage(e.getCode() + " " + e.getMessage());
+
                 }
                 @Override
                 public void onClose() {
-                    showMessage("user closed");
+
                 }
             });
         }
