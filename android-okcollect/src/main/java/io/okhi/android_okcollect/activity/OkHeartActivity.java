@@ -284,6 +284,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         JSONObject device = new JSONObject();
                         device.put("manufacturer", Build.MANUFACTURER);
                         device.put("model", Build.MODEL);
+                        device.put("firebaseToken", OkHi.getFirebaseToken(getApplicationContext()));
                         context.put("device", device);
 
                         JSONObject config = new JSONObject();
