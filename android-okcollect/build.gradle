@@ -9,7 +9,7 @@ def libraryCompileSdk = 33
 def libraryTargetSdk = 33
 def libraryMinSdk = 19
 def libraryVersionCode = 23
-def libraryVersion = '3.3.13'
+def libraryVersion = '3.3.14'
 
 android {
     compileSdkVersion libraryCompileSdk
@@ -52,7 +52,7 @@ publishing {
             groupId libraryGroupId
             version libraryVersion
             artifactId libraryArtifactId
-            artifact("$buildDir/outputs/aar/android-${artifactId}-release.aar")
+            artifact("$buildDir/outputs/aar/android-okcollect-release.aar")
         }
     }
 }
