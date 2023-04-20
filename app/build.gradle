@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "3.3.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     compileOptions {
@@ -31,5 +32,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':android-okcollect')
-    implementation 'com.github.OkHi:android-core:v1.7.7'
+    implementation 'io.okhi.android:core:1.7.8'
 }

@@ -1,15 +1,25 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
 group = 'com.github.android-okcollect'
 
+def libraryGroupId = 'io.okhi.android'
+def libraryArtifactId = 'okcollect'
+def libraryCompileSdk = 33
+def libraryTargetSdk = 33
+def libraryMinSdk = 19
+def libraryVersionCode = 23
+def libraryVersion = '3.3.13'
+
 android {
-    compileSdkVersion 33
+    compileSdkVersion libraryCompileSdk
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 33
-        versionCode 23
-        versionName "3.3.12"
+        minSdkVersion libraryMinSdk
+        targetSdkVersion libraryTargetSdk
+        versionCode libraryVersionCode
+        versionName libraryVersion
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -33,5 +43,34 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.annotation:annotation:1.5.0"
-    implementation 'com.github.OkHi:android-core:v1.7.7'
+    implementation 'io.okhi.android:core:1.7.8'
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId libraryGroupId
+            version libraryVersion
+            artifactId libraryArtifactId
+            artifact("$buildDir/outputs/aar/android-${artifactId}-release.aar")
+        }
+    }
+}
+
+artifactory {
+    contextUrl = artifactory_context_url
+    publish {
+        repository {
+            repoKey = artifactory_repo_key
+            username = artifactory_username
+            password = artifactory_password
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+
+            properties = ['qa.level': 'basic', 'q.os': 'android', 'dev.team': 'core']
+            publishPom = true
+        }
+    }
 }
