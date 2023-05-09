@@ -4,12 +4,12 @@ apply plugin: 'maven-publish'
 group = 'com.github.android-okcollect'
 
 def libraryGroupId = 'io.okhi.android'
-def libraryArtifactId = 'okcollect-dev'
+def libraryArtifactId = 'okcollect'
 def libraryCompileSdk = 33
 def libraryTargetSdk = 33
 def libraryMinSdk = 19
 def libraryVersionCode = 23
-def libraryVersion = '3.3.14'
+def libraryVersion = '3.3.15'
 
 android {
     compileSdkVersion libraryCompileSdk
