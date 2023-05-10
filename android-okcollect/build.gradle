@@ -9,7 +9,7 @@ def libraryCompileSdk = 33
 def libraryTargetSdk = 33
 def libraryMinSdk = 19
 def libraryVersionCode = 23
-def libraryVersion = '3.3.15'
+def libraryVersion = '3.3.16'
 
 android {
     compileSdkVersion libraryCompileSdk
@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.annotation:annotation:1.5.0"
-    implementation 'io.okhi.android:core:1.7.11'
+    implementation 'io.okhi.android:core:1.7.12'
 }
 
 publishing {
@@ -53,6 +53,27 @@ publishing {
             version libraryVersion
             artifactId libraryArtifactId
             artifact("$buildDir/outputs/aar/android-okcollect-release.aar")
+            pom.withXml {
+                // for dependencies and exclusions
+                def dependenciesNode = asNode().appendNode('dependencies')
+                def configurationNames = ["implementation", "api", "runtimeOnly"]
+                configurationNames.each { confName ->
+                    configurations[confName].allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                        if (it.hasProperty('exclude') && it.exclude.rules.size() > 0) {
+                            def exclusionsNode = dependencyNode.appendNode('exclusions')
+                            it.exclude.rules.each { rule ->
+                                def exclusionNode = exclusionsNode.appendNode('exclusion')
+                                exclusionNode.appendNode('groupId', rule.group)
+                                exclusionNode.appendNode('artifactId', rule.module)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
