@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.okhi.android_core.OkHi;
+import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiException;
 import io.okhi.android_core.models.OkHiLocation;
 import io.okhi.android_core.models.OkHiMode;
@@ -32,6 +33,7 @@ import io.okhi.android_okcollect.OkCollect;
 import io.okhi.android_okcollect.R;
 import io.okhi.android_okcollect.callbacks.OkCollectCallback;
 import io.okhi.android_okcollect.interfaces.WebAppInterface;
+import io.okhi.android_okcollect.models.OkCollectAuth;
 import io.okhi.android_okcollect.models.OkCollectLaunchMode;
 
 import static io.okhi.android_okcollect.utilities.Constants.DEV_HEART_URL_POST_22;
@@ -198,19 +200,21 @@ public class OkHeartActivity extends AppCompatActivity {
 
     private void checkAuthToken(){
         try {
-            while(getAuthorization() == null){
-                Thread.sleep(1000);
-            }
-            if(getAuthorization().equalsIgnoreCase("error")){
-                runCallback(getOkHiException());
-                finish();
-            }
-            else{
-                authorizationToken = getAuthorization();
-                launchHeart();
-            }
-        } catch (InterruptedException e) {
-            launchHeart();
+            OkCollectAuth auth = new OkCollectAuth(this);
+            auth.fetchAuthToken(phone, new OkHiRequestHandler<String>() {
+                @Override
+                public void onResult(String token) {
+                    authorizationToken = token;
+                    launchHeart();
+                }
+
+                @Override
+                public void onError(OkHiException e) {
+                    runCallback(e);
+                }
+            });
+        } catch (OkHiException e) {
+            runCallback(e);
         }
     }
 
@@ -504,10 +508,6 @@ public class OkHeartActivity extends AppCompatActivity {
 
     public static String getAuthorization() {
         return authorization;
-    }
-
-    public static void setAuthorization(String authorization) {
-        OkHeartActivity.authorization = authorization;
     }
 
     public OkCollectCallback<OkHiUser, OkHiLocation> getOkCollectCallback() {

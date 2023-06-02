@@ -61,7 +61,6 @@ public class OkCollect extends OkHiCore {
      */
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
             OkHiLocation> okCollectCallback){
-        getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
         intent.putExtra("params", getParameters(user));
         intent.putExtra("mode", auth.getContext().getMode());
@@ -71,7 +70,6 @@ public class OkCollect extends OkHiCore {
     }
 
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectLaunchMode launchMode, @NonNull final OkCollectCallback <OkHiUser, OkHiLocation> okCollectCallback){
-        getAuth(user);
         Intent intent = new Intent(activity, OkHeartActivity.class);
         intent.putExtra("params", getParameters(user));
         intent.putExtra("mode", auth.getContext().getMode());
@@ -103,20 +101,6 @@ public class OkCollect extends OkHiCore {
             displayLog("Json processing error "+e.toString());
         }
         return params;
-    }
-
-    private void getAuth(OkHiUser user){
-        anonymousSignWithPhoneNumber(user.getPhone(), SCOPES, new OkHiRequestHandler<String>() {
-            @Override
-            public void onResult(String result) {
-                OkHeartActivity.setAuthorization(result);
-            }
-            @Override
-            public void onError(OkHiException exception) {
-                OkHeartActivity.setAuthorization("error");
-                OkHeartActivity.setOkHiException(exception);
-            }
-        });
     }
     /** OkCollect builder class.
      */
