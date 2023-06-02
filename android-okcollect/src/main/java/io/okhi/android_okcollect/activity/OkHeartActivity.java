@@ -217,7 +217,7 @@ public class OkHeartActivity extends AppCompatActivity {
             runCallback(e);
         }
     }
-    
+
     private void launchHeart(){
         try{
             runOnUiThread(new Runnable() {
@@ -322,7 +322,6 @@ public class OkHeartActivity extends AppCompatActivity {
                         jsonObject.put("url", getWebUrl());
                         String payload = jsonObject.toString().replace("\\", "");
                         OkPreference.setItem("okcollect-launch-payload", payload, appContext);
-                        Log.v("LAUNCH_PAYLOAD", payload);
                         myWebView.evaluateJavascript("javascript:receiveAndroidMessage(" + payload + ")", null);
                     } catch (Exception e) {
                         runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
@@ -339,7 +338,6 @@ public class OkHeartActivity extends AppCompatActivity {
 
     private void processResponse(String response){
         try{
-            Log.v("OKCOLLECT_RESPONSE", response);
             JSONObject responseObject = new JSONObject(response);
             JSONObject payloadObject = responseObject.optJSONObject("payload");
             JSONObject locationObject = payloadObject.optJSONObject("location");
