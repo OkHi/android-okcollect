@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText phoneNumberTextField;
     private OkHiUser user;
 
-    private OkHiTheme theme = new OkHiTheme.Builder("#00fdaa")
+    private OkHiTheme theme = new OkHiTheme.Builder("#333")
         .setAppBarLogo("https://cdn.okhi.co/icon.png")
-        .setAppBarColor("#ba0c2f")
+        .setAppBarColor("#795548")
         .build();
     private OkHiConfig config = new OkHiConfig.Builder()
         .withStreetView()
@@ -66,23 +66,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchOkCollect(){
-        boolean canStartOkCollect = canStartAddressCreation();
-        if(user!= null && canStartOkCollect) {
-            okCollect.launch(user, OkCollectLaunchMode.CREATE, new OkCollectCallback<OkHiUser, OkHiLocation>() {
-                @Override
-                public void onSuccess(OkHiUser user, OkHiLocation location) {
+        okCollect.launch(user, new OkCollectCallback<OkHiUser, OkHiLocation>() {
+            @Override
+            public void onSuccess(OkHiUser user, OkHiLocation location) {
+                showMessage(user.getId() + ":" + location.getId());
+            }
+            @Override
+            public void onError(OkHiException e) {
 
-                }
-                @Override
-                public void onError(OkHiException e) {
+            }
+            @Override
+            public void onClose() {
 
-                }
-                @Override
-                public void onClose() {
-
-                }
-            });
-        }
+            }
+        });
     }
 
     private void showMessage(String log){
