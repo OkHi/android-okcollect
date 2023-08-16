@@ -2,8 +2,6 @@ package io.okhi.android_okcollect.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +14,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -46,24 +45,22 @@ import static io.okhi.android_okcollect.utilities.Constants.SANDBOX_HEART_URL_PR
 
 public class OkHeartActivity extends AppCompatActivity {
     private static WebView myWebView;
-    private Boolean enableStreetView, enableAppBar, homeAddressTypeEnabled, workAddressTypeEnabled;
+    private Boolean enableStreetView, enableAppBar, homeAddressTypeEnabled, workAddressTypeEnabled, permissionsOnboardingEnabled;
     private String phone, firstName, lastName,environment,developerName,
             authorizationToken,primaryColor,logoUrl,appBarColor, organisationName, email;
     private static OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback;
-    private static String authorization;
     private static OkHiException okHiException;
     private String params;
     private String mode;
-
     private String launchMode = OkCollectLaunchMode.SELECT.name();
-
     private static Context appContext;
-    private String webViewUrl;
+    private OkHiPermissionService permissionService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_okheart);
+        permissionService = new OkHiPermissionService(this);
         appContext = this;
         myWebView = findViewById(R.id.webview);
         Bundle bundle = getIntent().getExtras();
@@ -101,6 +98,7 @@ public class OkHeartActivity extends AppCompatActivity {
             organisationName = paramsObject.optString("organisationName");
             homeAddressTypeEnabled = paramsObject.optBoolean("homeAddressTypeEnabled", true);
             workAddressTypeEnabled = paramsObject.optBoolean("workAddressTypeEnabled", true);
+            permissionsOnboardingEnabled = paramsObject.optBoolean("permissionsOnboardingEnabled", true);
         } catch (Exception e){
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
@@ -163,19 +161,15 @@ public class OkHeartActivity extends AppCompatActivity {
                     checkAuthToken();
                     break;
                 case "location_created":
-                    processResponse(results);
-                    break;
-                case "location_updated":
-                    processResponse(results);
-                    break;
                 case "location_selected":
+                case "location_updated":
                     processResponse(results);
                     break;
                 case "request_enable_protected_apps":
                     processEnableProtectedApps();
                     break;
-                case "fatal_exit":
-                    processError(results);
+                case "request_location_permission":
+                    processLocationPermissionRequest(payload);
                     break;
                 case "exit_app":
                     exitApp(results);
@@ -188,6 +182,62 @@ public class OkHeartActivity extends AppCompatActivity {
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
         }
+    }
+
+    private void processLocationPermissionRequest(JSONObject payload) {
+        try {
+            String level = payload.getString("level");
+            if (level.equals("whenInUse")) {
+                requestLocationPermission();
+            } else if (level.equals("always")) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    requestLocationPermission();
+                } else {
+                    requestBackgroundLocationPermission();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void requestLocationPermission() {
+        permissionService.requestLocationPermission(new OkHiRequestHandler<Boolean>() {
+            @Override
+            public void onResult(Boolean result) {
+                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : result ? "whenInUse" : "denied";
+                runWebCallback(value);
+            }
+            @Override
+            public void onError(OkHiException e) {
+                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
+                runWebCallback(value);
+            }
+        });
+    }
+
+    private void requestBackgroundLocationPermission() {
+        permissionService.requestBackgroundLocationPermission(new OkHiRequestHandler<Boolean>() {
+            @Override
+            public void onResult(Boolean result) {
+                String value = result ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
+                runWebCallback(value);
+            }
+            @Override
+            public void onError(OkHiException e) {
+                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
+                runWebCallback(value);
+            }
+        });
+    }
+
+    private void runWebCallback(String value) {
+        myWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                myWebView.evaluateJavascript("javascript:runOkHiLocationManagerCallback(\""+value+"\")", null);
+            }
+        });
     }
 
     private void processEnableProtectedApps() {
@@ -288,6 +338,8 @@ public class OkHeartActivity extends AppCompatActivity {
                         JSONObject device = new JSONObject();
                         device.put("manufacturer", Build.MANUFACTURER);
                         device.put("model", Build.MODEL);
+                        device.put("platform", "android");
+                        device.put("osVersion", Build.VERSION.RELEASE);
                         context.put("device", device);
 
                         JSONObject config = new JSONObject();
@@ -317,6 +369,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("protectedApps", OkHiPermissionService.canOpenProtectedApps(appContext));
                         config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
+                        config.put("verificationOnboarding", permissionsOnboardingEnabled);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
                         jsonObject.put("url", getWebUrl());
@@ -439,17 +492,21 @@ public class OkHeartActivity extends AppCompatActivity {
 
     private void processError(String response){
         try {
-            final JSONObject jsonObject = new JSONObject(response);
-            String message = jsonObject.optString("message");
-            JSONObject payload = jsonObject.optJSONObject("payload");
-            if (payload == null) {
-                String backuppayload = jsonObject.optString("payload");
-                if (backuppayload != null) {
-                    payload = new JSONObject();
-                    payload.put("error", backuppayload);
+            if (response != null) {
+                final JSONObject jsonObject = new JSONObject(response);
+                String message = jsonObject.optString("message");
+                JSONObject payload = jsonObject.optJSONObject("payload");
+                if (payload == null) {
+                    String backuppayload = jsonObject.optString("payload");
+                    if (backuppayload != null) {
+                        payload = new JSONObject();
+                        payload.put("error", backuppayload);
+                    }
                 }
+                runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
+            } else {
+                runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE,OkHiException.UNKNOWN_ERROR_MESSAGE));
             }
-            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
             finish();
         }
         catch (Exception e){
@@ -506,28 +563,8 @@ public class OkHeartActivity extends AppCompatActivity {
         }
     }
 
-    public static String getAuthorization() {
-        return authorization;
-    }
-
-    public OkCollectCallback<OkHiUser, OkHiLocation> getOkCollectCallback() {
-        return okCollectCallback;
-    }
-
     public static void setOkCollectCallback(OkCollectCallback<OkHiUser, OkHiLocation> okCollectCallback) {
         OkHeartActivity.okCollectCallback = okCollectCallback;
-    }
-
-    public static OkHiException getOkHiException() {
-        return okHiException;
-    }
-
-    public static void setOkHiException(OkHiException okHiException) {
-        OkHeartActivity.okHiException = okHiException;
-    }
-
-    private void displayLog(String log){
-        Log.i("OkHeartActivity", log);
     }
 
     @Override
@@ -537,5 +574,11 @@ public class OkHeartActivity extends AppCompatActivity {
         } else{
             runOnCloseCallback();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionService.onRequestPermissionsResult(requestCode, permissions, grantResults, null);
     }
 }
