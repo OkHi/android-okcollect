@@ -369,7 +369,7 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("protectedApps", OkHiPermissionService.canOpenProtectedApps(appContext));
                         config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
-                        config.put("verificationOnboarding", permissionsOnboardingEnabled);
+                        config.put("permissionsOnboarding", permissionsOnboardingEnabled);
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
                         jsonObject.put("url", getWebUrl());
