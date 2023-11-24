@@ -2,9 +2,12 @@ package io.okhi.android_okcollect.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
@@ -171,16 +174,34 @@ public class OkHeartActivity extends AppCompatActivity {
                 case "request_location_permission":
                     processLocationPermissionRequest(payload);
                     break;
-                case "exit_app":
-                    exitApp(results);
+                case "open_app_settings":
+                    processOpenAppSettings();
                     break;
+                case "exit_app":
+                    runOnCloseCallback();
+                    break;
+                case "fatal_exit":
+                    processError();
                 default:
-                    processError(results);
+                    finish();
                     break;
             }
         } catch (JSONException e) {
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
+        }
+    }
+
+    private void processOpenAppSettings() {
+        try {
+            boolean granted = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext());
+            if (granted) {
+                runWebCallback("always");
+            } else {
+                OkHi.openAppSettings(getApplicationContext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -190,11 +211,7 @@ public class OkHeartActivity extends AppCompatActivity {
             if (level.equals("whenInUse")) {
                 requestLocationPermission();
             } else if (level.equals("always")) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                    requestLocationPermission();
-                } else {
-                    requestBackgroundLocationPermission();
-                }
+                requestBackgroundLocationPermission();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -490,33 +507,8 @@ public class OkHeartActivity extends AppCompatActivity {
         finish();
     }
 
-    private void processError(String response){
-        try {
-            if (response != null) {
-                final JSONObject jsonObject = new JSONObject(response);
-                String message = jsonObject.optString("message");
-                JSONObject payload = jsonObject.optJSONObject("payload");
-                if (payload == null) {
-                    String backuppayload = jsonObject.optString("payload");
-                    if (backuppayload != null) {
-                        payload = new JSONObject();
-                        payload.put("error", backuppayload);
-                    }
-                }
-                runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, payload.toString()));
-            } else {
-                runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE,OkHiException.UNKNOWN_ERROR_MESSAGE));
-            }
-            finish();
-        }
-        catch (Exception e){
-            runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
-            finish();
-        }
-    }
-
-    private void exitApp(String response){
-        runOnCloseCallback();
+    private void processError() {
+        runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE,OkHiException.UNKNOWN_ERROR_MESSAGE));
     }
 
     @Override
@@ -546,19 +538,6 @@ public class OkHeartActivity extends AppCompatActivity {
                 if (error.getErrorCode() == -1) {
                     return;
                 }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if(error.getErrorCode() != -2) {
-                    runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.getDescription().toString()));
-                    finish();
-                }
-                else if(error.getDescription().toString().equalsIgnoreCase("net::ERR_NAME_NOT_RESOLVED")){
-                    runCallback(new OkHiException(OkHiException.NETWORK_ERROR_CODE, OkHiException.NETWORK_ERROR_MESSAGE));
-                    finish();
-                }
-            } else {
-                runCallback(new OkHiException(OkHiException.UNKNOWN_ERROR_CODE, error.toString()));
-                finish();
             }
         }
     }
