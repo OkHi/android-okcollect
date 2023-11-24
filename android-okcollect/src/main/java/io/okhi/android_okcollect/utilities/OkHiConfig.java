@@ -14,15 +14,20 @@ public class OkHiConfig {
     private Boolean workAddressTypeEnabled = true;
     private Boolean homeAddressTypeEnabled = true;
 
+    private Boolean permissionsOnboardingEnabled = true;
+
     private OkHiConfig(Builder builder) {
         this.enableStreetView = builder.enableStreetView;
         this.workAddressTypeEnabled = builder.workAddressTypeEnabled;
         this.homeAddressTypeEnabled = builder.homeAddressTypeEnabled;
+        this.permissionsOnboardingEnabled = builder.permissionsOnboardingEnabled;
     }
     public static class Builder {
         private Boolean enableStreetView = false;
         private Boolean workAddressTypeEnabled = true;
         private Boolean homeAddressTypeEnabled = true;
+
+        private Boolean permissionsOnboardingEnabled = true;
 
         /**OkHiConfig builder
          */
@@ -64,6 +69,13 @@ public class OkHiConfig {
             return this;
         }
 
+        /** Enables or Disables permissions onboarding screens
+         */
+        public Builder withPermissionsOnboarding(Boolean enabled) {
+            this.permissionsOnboardingEnabled = enabled;
+            return this;
+        }
+
         /** Create OkHiConfig instance
          */
         public OkHiConfig build() {
@@ -82,5 +94,9 @@ public class OkHiConfig {
 
     public Boolean isHomeAddressTypeEnabled() {
         return this.homeAddressTypeEnabled;
+    }
+
+    public Boolean isPermissionsOnboardingEnabled() {
+        return this.permissionsOnboardingEnabled;
     }
 }
