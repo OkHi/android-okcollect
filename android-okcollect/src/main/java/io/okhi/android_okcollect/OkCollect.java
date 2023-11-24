@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
+import io.okhi.android_core.OkHi;
 import io.okhi.android_core.OkHiCore;
 import io.okhi.android_core.interfaces.OkHiRequestHandler;
 import io.okhi.android_core.models.OkHiAppContext;
@@ -39,6 +40,8 @@ public class OkCollect extends OkHiCore {
     private Boolean workAddressTypeEnabled;
     private Boolean homeAddressTypeEnabled;
     private Boolean enableAppBar;
+
+    private Boolean permissionsOnboardingEnabled;
     private static Activity activity;
 
     private OkCollect(Builder builder) throws OkHiException {
@@ -54,28 +57,36 @@ public class OkCollect extends OkHiCore {
         this.developer = auth.getContext().getDeveloper();
         this.workAddressTypeEnabled = builder.workAddressTypeEnabled;
         this.homeAddressTypeEnabled = builder.homeAddressTypeEnabled;
+        this.permissionsOnboardingEnabled = builder.permissionsOnboardingEnabled;
     }
     /** launch okhi address creation.
      * @param okCollectCallback the callback param to communicate with the parent class.
      * @param user the user object to create an address for.
      */
-    public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser,
-            OkHiLocation> okCollectCallback){
-        Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("params", getParameters(user));
-        intent.putExtra("mode", auth.getContext().getMode());
-        intent.putExtra("launchMode", OkCollectLaunchMode.SELECT.name());
-        activity.startActivity(intent);
-        OkHeartActivity.setOkCollectCallback(okCollectCallback);
+    public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectCallback <OkHiUser, OkHiLocation> okCollectCallback){
+        if (!permissionsOnboardingEnabled && !OkHi.isBackgroundLocationPermissionGranted(activity)) {
+            okCollectCallback.onError(new OkHiException(OkHiException.PERMISSION_DENIED_CODE, "Allow always location permission is required."));
+        } else {
+            Intent intent = new Intent(activity, OkHeartActivity.class);
+            intent.putExtra("params", getParameters(user));
+            intent.putExtra("mode", auth.getContext().getMode());
+            intent.putExtra("launchMode", OkCollectLaunchMode.SELECT.name());
+            activity.startActivity(intent);
+            OkHeartActivity.setOkCollectCallback(okCollectCallback);
+        }
     }
 
     public void launch(@NonNull final OkHiUser user, @NonNull final OkCollectLaunchMode launchMode, @NonNull final OkCollectCallback <OkHiUser, OkHiLocation> okCollectCallback){
-        Intent intent = new Intent(activity, OkHeartActivity.class);
-        intent.putExtra("params", getParameters(user));
-        intent.putExtra("mode", auth.getContext().getMode());
-        intent.putExtra("launchMode", launchMode.name());
-        activity.startActivity(intent);
-        OkHeartActivity.setOkCollectCallback(okCollectCallback);
+        if (!permissionsOnboardingEnabled && !OkHi.isBackgroundLocationPermissionGranted(activity)) {
+            okCollectCallback.onError(new OkHiException(OkHiException.PERMISSION_DENIED_CODE, "Allow always location permission is required."));
+        } else {
+            Intent intent = new Intent(activity, OkHeartActivity.class);
+            intent.putExtra("params", getParameters(user));
+            intent.putExtra("mode", auth.getContext().getMode());
+            intent.putExtra("launchMode", launchMode.name());
+            activity.startActivity(intent);
+            OkHeartActivity.setOkCollectCallback(okCollectCallback);
+        }
     }
 
     private String getParameters(OkHiUser user ){
@@ -95,6 +106,7 @@ public class OkCollect extends OkHiCore {
             jsonObject.put("developerName", developer);
             jsonObject.put("workAddressTypeEnabled", workAddressTypeEnabled);
             jsonObject.put("homeAddressTypeEnabled", homeAddressTypeEnabled);
+            jsonObject.put("permissionsOnboardingEnabled", permissionsOnboardingEnabled);
             params = jsonObject.toString();
         }
         catch (Exception e){
@@ -113,6 +125,8 @@ public class OkCollect extends OkHiCore {
         private Activity activity;
         private Boolean workAddressTypeEnabled;
         private Boolean homeAddressTypeEnabled;
+
+        private Boolean permissionsOnboardingEnabled;
         /** OkCollect builder.
          * @param activity the context to run okhi webview.
          *
@@ -139,6 +153,7 @@ public class OkCollect extends OkHiCore {
             this.enableStreetView = okHiConfig.isStreetViewEnabled();
             this.homeAddressTypeEnabled = okHiConfig.isHomeAddressTypeEnabled();
             this.workAddressTypeEnabled = okHiConfig.isWorkAddressTypeEnabled();
+            this.permissionsOnboardingEnabled = okHiConfig.isPermissionsOnboardingEnabled();
             return this;
         }
         /** Create an instance of okcollect
