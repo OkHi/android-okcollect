@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         lastNameTextField = findViewById(R.id.lastNameTextField);
         phoneNumberTextField = findViewById(R.id.phoneNumberTextField);
         enablePermissionsOnboardingSwitch = findViewById(R.id.enablePermissionsOnboarding);
+
+        emailTextField.setText("kiano@okhi.co");
+        firstNameTextField.setText("Julius");
+        lastNameTextField.setText("Kiano");
+        phoneNumberTextField.setText("+25");
     }
 
     private void launchOkCollect(){
