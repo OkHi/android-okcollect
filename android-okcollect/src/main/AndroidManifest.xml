@@ -9,7 +9,7 @@
     <application
         android:launchMode="singleInstance">
         <activity
-            android:exported="true"
+            android:exported="false"
             android:theme="@style/OkCollectTheme"
             android:name="io.okhi.android_okcollect.activity.OkHeartActivity">
 
