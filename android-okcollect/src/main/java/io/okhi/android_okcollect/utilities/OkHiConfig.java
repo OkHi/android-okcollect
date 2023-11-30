@@ -39,6 +39,11 @@ public class OkHiConfig {
             return this;
         }
 
+        public Builder withStreetView(Boolean enabled){
+            this.enableStreetView = enabled;
+            return this;
+        }
+
         /** Enables different address types for creation
          */
         public Builder withAddressTypes(ArrayList<OkCollectAddressType> addressTypes){
