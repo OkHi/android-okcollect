@@ -34,6 +34,11 @@ public class OkHiConfig {
         public Builder() { }
         /** Enable streetview
          */
+        public Builder withStreetView(){
+            this.enableStreetView = true;
+            return this;
+        }
+
         public Builder withStreetView(Boolean enabled){
             this.enableStreetView = enabled;
             return this;
