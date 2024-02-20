@@ -221,14 +221,14 @@ public class OkHeartActivity extends AppCompatActivity {
     private void requestLocationPermission() {
         permissionService.requestLocationPermission(new OkHiRequestHandler<Boolean>() {
             @Override
-            public void onResult(Boolean result) {
-                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : result ? "whenInUse" : "denied";
-                runWebCallback(value);
+            public void onResult(Boolean whenInUsePermissionResult) {
+                boolean alwaysPermissionResult = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext());
+                runWebCallback(alwaysPermissionResult ? "always" : whenInUsePermissionResult ? "whenInUse" : "blocked");
             }
             @Override
             public void onError(OkHiException e) {
-                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
-                runWebCallback(value);
+                e.printStackTrace();
+                runWebCallback("blocked");
             }
         });
     }
@@ -237,13 +237,12 @@ public class OkHeartActivity extends AppCompatActivity {
         permissionService.requestBackgroundLocationPermission(new OkHiRequestHandler<Boolean>() {
             @Override
             public void onResult(Boolean result) {
-                String value = result ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
-                runWebCallback(value);
+                runWebCallback(result ? "always" : "blocked");
             }
             @Override
             public void onError(OkHiException e) {
-                String value = OkHi.isBackgroundLocationPermissionGranted(getApplicationContext()) ? "always" : OkHi.isLocationPermissionGranted(getApplicationContext()) ? "whenInUse" : "denied";
-                runWebCallback(value);
+                e.printStackTrace();
+                runWebCallback("blocked");
             }
         });
     }
