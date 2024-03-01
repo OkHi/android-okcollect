@@ -390,7 +390,7 @@ public class OkHeartActivity extends AppCompatActivity {
 
                         String existingIds = fetchLocationIds();
                         if (existingIds != null) {
-                            payload1.put("locations", existingIds);
+                            payload1.put("locations", new JSONArray(existingIds));
                         }
 
                         payload1.put("config", config);
