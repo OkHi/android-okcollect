@@ -20,6 +20,7 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -386,6 +387,12 @@ public class OkHeartActivity extends AppCompatActivity {
                         config.put("addressTypes", addressTypes);
                         config.put("appBar", appBar);
                         config.put("permissionsOnboarding", permissionsOnboardingEnabled);
+
+                        String existingIds = fetchLocationIds();
+                        if (existingIds != null) {
+                            payload1.put("locations", new JSONArray(existingIds));
+                        }
+
                         payload1.put("config", config);
                         jsonObject.put("payload", payload1);
                         jsonObject.put("url", getWebUrl());
@@ -402,6 +409,14 @@ public class OkHeartActivity extends AppCompatActivity {
         catch (Exception e){
             runCallback(new OkHiException( OkHiException.UNKNOWN_ERROR_CODE, e.getMessage()));
             finish();
+        }
+    }
+
+    private String fetchLocationIds() {
+        try {
+            return OkPreference.getItem("registered_geofences", getApplicationContext());
+        } catch (OkHiException e) {
+            return null;
         }
     }
 
